@@ -1,6 +1,7 @@
 patches-own [
   living?         ;; indicates if the cell is living
-  live-neighbors  ;; counts how many neighboring cells are alive
+  outer-neighbors  ;; counts how many neighboring cells are alive
+  inner-neighbors
 ]
 
 to setup-blank
@@ -28,18 +29,40 @@ to cell-death
   set pcolor bgcolor
 end
 
+to count-extended-neighbors
+  set outer-neighbors 0
+  let x-coords [ -2 -1 1 2 ]
+  let y-coords [ -2 -1 1 2 ]
+  foreach x-coords
+    [ x -> foreach y-coords
+      [  y ->  if [living?] of patch-at x y
+        [ set outer-neighbors outer-neighbors + 1 ] ] ]
+end
+
+to determine-life-and-death
+   ifelse outer-neighbors < inner-neighbors
+        [ cell-birth
+          ask patch-at 3 0
+            [ cell-birth ]
+          ask patch-at 25 0
+            [ cell-birth ]
+          ask patch-at 0 5
+            [ cell-birth ] ]
+        [ cell-death ]
+end
+
 to go
+
   ask patches
-    [ set live-neighbors count neighbors with [living?] ]
+    [ count-extended-neighbors ]
+  ask patches
+    [ set inner-neighbors count neighbors with [living?] ]
   ;; Starting a new "ask patches" here ensures that all the patches
   ;; finish executing the first ask before any of them start executing
   ;; the second ask.  This keeps all the patches in synch with each other,
   ;; so the births and deaths at each generation all happen in lockstep.
   ask patches
-    [ ifelse live-neighbors = 3
-      [ cell-birth ]
-      [ if live-neighbors != 2
-        [ cell-death ] ] ]
+    [ determine-life-and-death ]
   tick
 end
 
@@ -58,10 +81,10 @@ end
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-285
-10
-697
-423
+290
+22
+702
+435
 -1
 -1
 4.0
@@ -82,7 +105,7 @@ GRAPHICS-WINDOW
 1
 1
 ticks
-15.0
+30.0
 
 SLIDER
 120
@@ -93,7 +116,7 @@ initial-density
 initial-density
 0.0
 100.0
-35.0
+71.1
 0.1
 1
 %
