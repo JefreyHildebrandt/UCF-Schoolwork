@@ -1,105 +1,194 @@
 patches-own [
   living?         ;; indicates if the cell is living
-  outer-neighbors  ;; counts how many neighboring cells are alive
-  inner-neighbors
+  live-neighbors  ;; counts how many neighboring cells are alive
+  permanent?
+  move-direction
+  moving?
 ]
+
+globals [
+  up-color
+  down-color
+  left-color
+  right-color
+  moving-color
+  dying-color
+  move-up
+  move-right
+  move-down
+  move-left
+  x-coords
+  y-coords
+]
+
+to setup-global
+  set up-color approximate-rgb 66 217 244       ;; blue
+  set right-color approximate-rgb 66 217 244    ;; blue
+  set down-color approximate-rgb 66 217 244     ;; blue
+  set left-color approximate-rgb 66 217 244     ;; blue
+  set moving-color approximate-rgb 255 105 180  ;; pink
+
+  set move-up 0
+  set move-right 1
+  set move-down 2
+  set move-left 3
+  set x-coords [ 0 -1 1 ]
+  set y-coords [ 0 -1 1 ]
+end
+
+to setup-patches
+  set living? false       ;; indicates if the cell is living
+  set live-neighbors 0 ;; counts how many neighboring cells are alive
+  set permanent? false
+  set move-direction -1
+  set moving? false
+  set pcolor bgcolor
+end
 
 to setup-blank
   clear-all
-  ask patches [ cell-death ]
+  setup-global
+  ask patches
+  [ cell-death ]
   reset-ticks
 end
 
 to setup-random
   clear-all
+  setup-global
   ask patches
-    [ ifelse random-float 100.0 < initial-density
-      [ cell-birth ]
+    [ setup-patches
+      ifelse random-float 100.0 < initial-density
+      [ ifelse random-float 100.0 < permanent-density
+        [set permanent? true
+         set move-direction random 4
+         set-cell-color ]
+        [ cell-birth ] ]
       [ cell-death ] ]
   reset-ticks
 end
 
-to setup-vertical-bars
-  clear-all
-  ask patches
-    [ let bar-position pxcor mod 5
-      ifelse bar-position < 3
-      [ cell-death ]
-      [ cell-birth ] ]
-  reset-ticks
+to set-cell-color
+  if permanent? = true
+    [ set living? true
+      ifelse move-direction = move-up
+      [ set pcolor up-color ]
+      [ ifelse move-direction = move-right
+        [ set pcolor right-color ]
+        [ ifelse move-direction = move-down
+          [ set pcolor down-color ]
+          [ if move-direction = move-left
+            [ set pcolor left-color ] ] ] ] ]
 end
 
-to setup-horizontal-bars
-  clear-all
-  ask patches
-    [ let bar-position pycor mod 5
-      ifelse bar-position < 3
-      [ cell-death ]
-      [ cell-birth ] ]
-  reset-ticks
+to move-cell
+  if permanent? = false
+  [if living? = true
+    [ ifelse moving?
+      [ ifelse move-direction = move-up
+        [ move-cell-helper pxcor (pycor + 1) move-direction moving? ]
+        [ ifelse move-direction = move-right
+          [ move-cell-helper (pxcor + 1) pycor move-direction moving? ]
+          [ ifelse move-direction = move-down
+            [ move-cell-helper pxcor (pycor - 1) move-direction moving? ]
+            [ if move-direction = move-left
+              [ move-cell-helper (pxcor - 1) pycor move-direction moving? ] ] ] ]
+        if moving? = true
+        [ cell-death ] ]
+    [ foreach x-coords
+      [ x -> foreach y-coords
+        [  y ->  if [permanent?] of patch-at x y
+            [ move-cell-with-permanent x y ] ] ] ] ] ]
+end
+
+to move-cell-helper [ x y local-move-direction local-moving? ]
+  let done-moving? false
+  ask patch x y
+    [ ifelse permanent? = false
+      [  ifelse living? = false
+          [ cell-birth
+            set move-direction local-move-direction
+            set moving? local-moving?
+            set pcolor moving-color]
+        [ set done-moving? true ] ]
+      [ set done-moving? true ] ]
+  if done-moving? = true
+    [ cell-birth ]
+end
+
+to move-cell-with-permanent [ permanent-x permanent-y ]
+  if moving? = false
+    [ let permanent-direction []
+      ask patch-at permanent-x permanent-y
+        [ set permanent-direction move-direction ]
+      set move-direction permanent-direction
+      set moving? true
+      move-cell]
 end
 
 to cell-birth
+  setup-patches
   set living? true
   set pcolor fgcolor
 end
 
 to cell-death
-  set living? false
-  set pcolor bgcolor
-end
-
-to count-extended-neighbors
-  set outer-neighbors 0
-  let x-coords [ -2 -1 1 2 ]
-  let y-coords [ -2 -1 1 2 ]
-  foreach x-coords
-    [ x -> foreach y-coords
-      [  y ->  if [living?] of patch-at x y
-        [ set outer-neighbors outer-neighbors + 1 ] ] ]
-end
-
-to determine-life-and-death
-   ifelse outer-neighbors < inner-neighbors
-        [ ask patch-at 5 0
-            [ cell-birth ] ]
-        [ cell-death ]
+  setup-patches
 end
 
 to go
-
   ask patches
-    [ count-extended-neighbors ]
-  ask patches
-    [ set inner-neighbors count neighbors with [living?] ]
-  ;; Starting a new "ask patches" here ensures that all the patches
-  ;; finish executing the first ask before any of them start executing
-  ;; the second ask.  This keeps all the patches in synch with each other,
-  ;; so the births and deaths at each generation all happen in lockstep.
-  ask patches
-    [ determine-life-and-death ]
+    [ move-cell ]
   tick
 end
 
-to draw-cells
+to kill-non-moving
+  ask patches
+    [ if moving? = false
+      [ if permanent? = false
+        [ cell-death ] ] ]
+end
+
+to give-additional-colors-for-directions
+  set up-color approximate-rgb 160 65 244       ;; purple
+  set right-color approximate-rgb 66 217 244    ;; blue
+  set down-color approximate-rgb 244 232 66     ;; yellow
+  set left-color approximate-rgb 66 244 13      ;; green
+  set moving-color approximate-rgb 255 105 180  ;; pink
+
+  ask patches with [ permanent? ]
+    [ ifelse move-direction = move-up
+        [ set pcolor up-color ]
+         [ ifelse move-direction = move-right
+          [ set pcolor right-color ]
+          [ ifelse move-direction = move-down
+            [ set pcolor down-color ]
+            [ if move-direction = move-left
+            [ set pcolor left-color ] ] ] ] ]
+end
+
+to draw-cells [ permanent-type ]
   let erasing? [living?] of patch mouse-xcor mouse-ycor
   while [mouse-down?]
     [ ask patch mouse-xcor mouse-ycor
       [ ifelse erasing?
         [ cell-death ]
-        [ cell-birth ] ]
+        [ cell-birth
+          if permanent-type != -1
+            [ set permanent? true ]
+          set move-direction permanent-type
+          set-cell-color] ]
       display ]
 end
-
 
 ; Copyright 1998 Uri Wilensky.
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-290
-22
-702
-435
+285
+10
+697
+423
 -1
 -1
 4.0
@@ -120,18 +209,18 @@ GRAPHICS-WINDOW
 1
 1
 ticks
-30.0
+15.0
 
 SLIDER
-118
-88
-274
-121
+120
+67
+276
+100
 initial-density
 initial-density
 0.0
 100.0
-21.1
+66.1
 0.1
 1
 %
@@ -206,10 +295,10 @@ NIL
 0
 
 MONITOR
-12
-248
-115
-293
+13
+105
+116
+150
 current density
 count patches with\n  [living?]\n/ count patches
 2
@@ -217,10 +306,10 @@ count patches with\n  [living?]\n/ count patches
 11
 
 BUTTON
-11
-32
-113
-65
+3
+30
+105
+63
 NIL
 setup-blank
 NIL
@@ -233,23 +322,13 @@ NIL
 NIL
 1
 
-TEXTBOX
-124
-125
-283
-193
-When this button is down,\nyou can add or remove\ncells by holding down\nthe mouse button\nand \"drawing\".
-11
-0.0
-0
-
 BUTTON
-9
-134
-112
-169
-NIL
+10
+258
+113
+293
 draw-cells
+draw-cells -1
 T
 1
 T
@@ -283,12 +362,95 @@ bgcolor
 Color
 
 BUTTON
-128
-6
-265
-40
+10
+335
+100
+369
+draw-right
+draw-cells move-right
+T
+1
+T
+OBSERVER
 NIL
-setup-vertical-bars
+NIL
+NIL
+NIL
+1
+
+BUTTON
+12
+299
+91
+333
+draw-up
+draw-cells move-up
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+10
+371
+105
+405
+draw-down
+draw-cells move-down
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+10
+407
+93
+441
+draw-left
+draw-cells move-left
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+110
+23
+283
+57
+permanent-density
+permanent-density
+0
+100
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+23
+158
+137
+192
+NIL
+kill-non-moving
 NIL
 1
 T
@@ -300,12 +462,12 @@ NIL
 1
 
 BUTTON
-122
-46
-273
-80
-NIL
-setup-horizontal-bars
+149
+112
+268
+146
+Direction Colors
+give-additional-colors-for-directions
 NIL
 1
 T
