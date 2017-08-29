@@ -51,12 +51,15 @@ end
 
 to count-extended-neighbors
   set outer-neighbors 0
-  let x-coords [ -2 -1 1 2 ]
-  let y-coords [ -2 -1 1 2 ]
+  let x-coords [ -2 -1 0 1 2 ]
+  let y-coords [ -2 -1 0 1 2 ]
   foreach x-coords
-    [ x -> foreach y-coords
-      [  y ->  if [living?] of patch-at x y
-        [ set outer-neighbors outer-neighbors + 1 ] ] ]
+    [ x -> if x != 0
+      [foreach y-coords
+      [  y ->
+        if y != 0
+          [ if [living?] of patch-at x y
+            [ set outer-neighbors outer-neighbors + 1 ] ] ] ] ]
 end
 
 to determine-life-and-death
