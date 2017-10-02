@@ -2,10 +2,36 @@ globals [
   percent-similar  ;; on the average, what percent of a turtle's neighbors
                    ;; are the same color as that turtle?
   percent-unhappy  ;; what percent of the turtles are unhappy?
+
+  quadrants
+  quad-color
+  number
+  price
+  red
+  blue-count
+  empty-patches
+
   quad-one-price
   quad-two-price
   quad-three-price
   quad-four-price
+
+  quad-one-red-count
+  quad-one-blue-count
+  quad-two-red-count
+  quad-two-blue-count
+  quad-three-red-count
+  quad-three-blue-count
+  quad-four-red-count
+  quad-four-blue-count
+
+  ;; the following 4 variables are lists of lists with 0 = pxcor and y = pycor
+  quad-one-empty-patches
+  quad-two-empty-patches
+  quad-three-empty-patches
+  quad-four-empty-patches
+
+  total-money
   ;;salary-increase-percent-range-min
   ;;salary-increase-percent-range-max
   ;;starting-cash-range-min
@@ -19,98 +45,269 @@ turtles-own [
   other-nearby     ;; how many have a turtle of another color?
   total-nearby     ;; sum of previous two variables
   cash
-  salary-percent
+  wealth-type
 ]
 
 patches-own [
   quadrant
 ]
 
-to calculate-quadrant-prices
+to update-quadrants
+  set quad-one-price mean [cash] of turtles with [quadrant = 1]
+  set quad-two-price mean [cash] of turtles with [quadrant = 2]
+  set quad-three-price mean [cash] of turtles with [quadrant = 3]
+  set quad-four-price mean [cash] of turtles with [quadrant = 4]
+
+  set quad-one-red-count count turtles with [color = red and quadrant = 1]
+  set quad-one-blue-count count turtles with [color = sky and quadrant = 1]
+  set quad-two-red-count count turtles with [color = red and quadrant = 2]
+  set quad-two-blue-count count turtles with [color = sky and quadrant = 2]
+  set quad-three-red-count count turtles with [color = red and quadrant = 3]
+  set quad-three-blue-count count turtles with [color = sky and quadrant = 3]
+  set quad-four-red-count count turtles with [color = red and quadrant = 4]
+  set quad-four-blue-count count turtles with [color = sky and quadrant = 4]
+
+  set quad-one-empty-patches get-free-patches 1
+  set quad-two-empty-patches get-free-patches 2
+  set quad-three-empty-patches get-free-patches 3
+  set quad-four-empty-patches get-free-patches 4
+
+  ;;print length quad-one-empty-patches
+end
+
+to create-quadrants
+  print min-pxcor
+  print min-pycor
+  print max-pxcor
+  print max-pycor
+
+  set quadrants (list)
+  let i 0
+  while [i < number-of-quadrants ]
+  [ set quadrants lput (list random 140 i) quadrants
+    set i i + 1 ]
 end
 
 to set-quadrant-colors
   ifelse pxcor = 0
   [ set quadrant 0
-    set pcolor approximate-rgb 0 0 0 ]
+    set pcolor black ]
   [ ifelse pycor = 0
     [ set quadrant 0
-      set pcolor approximate-rgb 0 0 0 ]
+      set pcolor black ]
     [ ifelse pxcor < 0
       [ ifelse pycor > 0
         [ set quadrant 1
-          set pcolor approximate-rgb 66 217 244 ] ;; blue
+          set pcolor 2 ] ;; gray
         [ set quadrant 3
-          set pcolor approximate-rgb 244 232 66 ]]  ;; yellow
+          set pcolor 22 ]] ;; orange
       [ ifelse pycor > 0
         [ set quadrant 2
-          set pcolor approximate-rgb 66 244 13 ] ;; green
+          set pcolor 112 ] ;; purple
         [ set quadrant 4
-          set pcolor approximate-rgb 255 105 180 ]]]] ;; pink
+          set pcolor 62 ]]]] ;; green
+
+  let pxcor-count min-pxcor
+  let add-width ((min-pxcor * -1) + max-pxcor) / number-of-quadrants
+  let i 0
+  while [pxcor > pxcor-count ]
+  [ set pxcor-count pxcor-count + add-width
+    if pxcor >= pxcor-count
+    [ let the-quad item i quadrants
+      set pcolor item 0 the-quad
+      set i i + 1 ] ]
 end
 
 to setup
   clear-all
+  set total-money  1000000
+  create-quadrants
   ;; create turtles on random patches.
   ask patches [
     set-quadrant-colors
     if random 100 < density [   ;; set the occupancy density
       if quadrant != 0
       [ sprout 1 [
-        set color one-of [red green]
+        set color one-of [red sky] ;; red blue
+        let wealth-level random 100
+        ifelse wealth-level = 0
+        [ set wealth-type "Top 1%"]
+        [ ifelse wealth-level >= 1 and wealth-level < 5
+          [ set wealth-type "Next 4%"]
+          [ ifelse wealth-level >= 5 and wealth-level < 10
+            [ set wealth-type "Next 5%"]
+            [ ifelse wealth-level >= 10 and wealth-level < 20
+              [ set wealth-type "Next 10%"]
+              [ ifelse wealth-level >= 20 and wealth-level < 40
+                [ set wealth-type "Upper Middle 20%"]
+                [ ifelse wealth-level >= 40 and wealth-level < 60
+                  [ set wealth-type "Middle 20%"]
+                  [ set wealth-type "Bottom 40%"]]]]]]
       ]]
     ]
   ]
-  update-turtles
-  update-globals
+  set-cash
+  update-quadrants
+  ;;update-turtles
+  ;;update-globals
   reset-ticks
+end
+
+to set-cash
+  let total-turtles count turtles
+  let top-1%-cash total-money * .35
+  let next-4%-cash total-money * .27
+  let next-5%-cash total-money * .11
+  let next-10%-cash total-money * .12
+  let upper-middle-20%-cash total-money * .11
+  let middle-20%-cash total-money * .04
+  let bottom-40%-cash total-money * .01
+
+  let total-1% count turtles with [wealth-type = "Top 1%"]
+  ask turtles with [wealth-type = "Top 1%"]
+  [ set cash top-1%-cash / total-1%
+    set shape "box"]
+
+  let total-4% count turtles with [wealth-type = "Next 4%"]
+  ask turtles with [wealth-type = "Next 4%"]
+  [ set cash next-4%-cash / total-1%
+    set shape "airplane"]
+
+  let total-5% count turtles with [wealth-type = "Next 5%"]
+  ask turtles with [wealth-type = "Next 5%"]
+  [ set cash next-5%-cash / total-5%
+    set shape "house"]
+
+  let total-10% count turtles with [wealth-type = "Next 10%"]
+  ask turtles with [wealth-type = "Next 10%"]
+  [ set cash next-10%-cash / total-10%
+    set shape "truck"]
+
+  let total-u-m-20% count turtles with [wealth-type = "Upper Middle 20%"]
+  ask turtles with [wealth-type = "Upper Middle 20%"]
+  [ set cash upper-middle-20%-cash / total-u-m-20%
+    set shape "square"]
+
+  let total-m-20% count turtles with [wealth-type = "Middle 20%"]
+  ask turtles with [wealth-type = "Middle 20%"]
+  [ set cash middle-20%-cash / total-m-20%
+    set shape "square-x"]
+
+  let total-b-40% count turtles with [wealth-type = "Bottom 40%"]
+  ask turtles with [wealth-type = "Bottom 40%"]
+  [ set cash bottom-40%-cash / total-b-40%
+    set shape "square 2"]
 end
 
 ;; run the model for one tick
 to go
-  if all? turtles [ happy? ] [ stop ]
-  move-unhappy-turtles
+  ;;if all? turtles [ happy? ] [ stop ]
+  ;;move-unhappy-turtles
   update-turtles
-  update-globals
-
+  ;;update-globals
+  update-quadrants
   tick
 end
 
-;; unhappy turtles try a new spot
-to move-unhappy-turtles
-  ask turtles with [ not happy? ]
-    [ find-new-spot ]
+to move-to-different-neighborhood
+  let quad-num 0
+  let quad-price 1
+  let quad-meets-ratio 2
+  let quad-has-free-space 3
+
+  let quad-info
+   (list
+     (list 1 quad-one-price meets-ratio color quad-one-red-count quad-one-blue-count has-free-space 1)
+      (list 2 quad-two-price meets-ratio color quad-two-red-count quad-two-blue-count has-free-space 2)
+       (list 3 quad-three-price meets-ratio color quad-three-red-count quad-three-blue-count has-free-space 3)
+        (list 4 quad-four-price meets-ratio color quad-four-red-count quad-four-blue-count has-free-space 4))
+  let my-quad item (quadrant - 1) quad-info
+
+  ;; quadrant info sorted by highest price to lowest
+  set quad-info sort-by [[list-one list-two] -> item quad-price list-one > item quad-price list-two] quad-info
+  ifelse (item quad-meets-ratio my-quad)
+  [ let passed-my-quad? false
+    foreach quad-info
+    [ cur-quad ->
+       if not passed-my-quad?
+        [ ifelse item quad-num cur-quad = item quad-num my-quad
+          [ set passed-my-quad? true ]
+          [ if item quad-has-free-space cur-quad
+            [ if cash >= item quad-price cur-quad
+              [ move-turtle-to-free-space item quad-num cur-quad ]]]]]]
+  [ foreach quad-info
+    [ cur-quad ->
+      if item quad-has-free-space cur-quad
+      [ if cash >= item quad-price cur-quad
+        [ if item quad-meets-ratio cur-quad
+          [ move-turtle-to-free-space item quad-num cur-quad ]]]]]
 end
 
-;; move until we find an unoccupied spot
-to find-new-spot
-  rt random-float 360
-  fd random-float 10
-  if any? other turtles-here [ find-new-spot ] ;; keep going until we find an unoccupied patch
-  move-to patch-here  ;; move to center of patch
+to-report meets-ratio [my-color red-count blue-count]
+  let my-color-count 0
+  ifelse my-color = red
+  [set my-color-count red-count]
+  [set my-color-count blue-count]
+  report my-color-count >= (%-similar-wanted * (red-count + blue-count) / 100)
+end
+
+to move-turtle-to-free-space [quadrant-number]
+  ifelse quadrant-number = 1
+    [ let move-to-this-patch item 0 quad-one-empty-patches
+      set quad-one-empty-patches remove-item 0 quad-one-empty-patches
+      setxy item 0 move-to-this-patch item 1 move-to-this-patch ]
+    [ ifelse quadrant-number = 2
+      [ let move-to-this-patch item 0 quad-two-empty-patches
+        set quad-two-empty-patches remove-item 0 quad-two-empty-patches
+        setxy item 0 move-to-this-patch item 1 move-to-this-patch]
+      [ ifelse quadrant-number = 3
+        [ let move-to-this-patch item 0 quad-three-empty-patches
+          set quad-three-empty-patches remove-item 0 quad-three-empty-patches
+          setxy item 0 move-to-this-patch item 1 move-to-this-patch]
+        [ if quadrant-number = 4
+          [ let move-to-this-patch item 0 quad-four-empty-patches
+            set quad-four-empty-patches remove-item 0 quad-four-empty-patches
+            setxy item 0 move-to-this-patch item 1 move-to-this-patch]]]]
+end
+
+to-report has-free-space [quadrant-number]
+  ifelse quadrant-number = 1
+    [ report length quad-one-empty-patches > 0]
+    [ ifelse quadrant-number = 2
+      [ report length quad-two-empty-patches > 0]
+      [ ifelse quadrant-number = 3
+        [ report length quad-three-empty-patches > 0]
+        [ if quadrant-number = 4
+          [ report length quad-four-empty-patches > 0]]]]
+end
+
+to-report get-free-patches [quadrant-number]
+  let open-list (list)
+  ask patches with [quadrant = quadrant-number and count turtles-here < 1]
+  [set open-list lput (list pxcor pycor) open-list]
+  report open-list
 end
 
 to update-turtles
   ask turtles [
+    ;;let salary cash * salary-percent
+    ;;set cash cash + salary
+
+    move-to-different-neighborhood
+
     ;; in next two lines, we use "neighbors" to test the eight patches
     ;; surrounding the current patch
-    set similar-nearby count (turtles-on neighbors)  with [ color = [ color ] of myself ]
-    set other-nearby count (turtles-on neighbors) with [ color != [ color ] of myself ]
-    set total-nearby similar-nearby + other-nearby
-    set happy? similar-nearby >= (%-similar-wanted * total-nearby / 100)
-    ;; add visualization here
-    if visualization = "old" [ set shape "default" ]
-    if visualization = "square-x" [
-      ifelse happy? [ set shape "square" ] [ set shape "square-x" ]
-    ]
+    ;;set similar-nearby count (turtles-on neighbors)  with [ color = [ color ] of myself ]
+    ;;set other-nearby count (turtles-on neighbors) with [ color != [ color ] of myself ]
+    ;;set total-nearby similar-nearby + other-nearby
+    ;;set happy? similar-nearby >= (%-similar-wanted * total-nearby / 100)
+    ;;ifelse happy? [ set shape "square" ] [ set shape "square-x" ]
+    ;;ifelse cash > quad-one-price and cash > quad-two-price and cash > quad-three-price and cash > quad-four-price
+    ;;[ set shape "box" ]
+    ;;[ ifelse cash < quad-one-price and cash < quad-two-price and cash < quad-three-price and cash < quad-four-price
+    ;;  [ set shape "square 2" ]
+    ;;  [ set shape "square" ]]
   ]
-end
-
-to update-globals
-  let similar-neighbors sum [ similar-nearby ] of turtles
-  let total-neighbors sum [ total-nearby ] of turtles
-  set percent-similar (similar-neighbors / total-neighbors) * 100
-  set percent-unhappy (count turtles with [ not happy? ]) / (count turtles) * 100
 end
 
 
@@ -193,7 +390,7 @@ SLIDER
 %-similar-wanted
 0
 100
-52.0
+29.0
 1
 1
 %
@@ -250,16 +447,6 @@ NIL
 NIL
 0
 
-CHOOSER
-206
-446
-355
-491
-visualization
-visualization
-"old" "square-x"
-1
-
 SLIDER
 26
 10
@@ -267,9 +454,9 @@ SLIDER
 43
 density
 density
-50
+1
 99
-72.0
+59.0
 1
 1
 %
@@ -315,46 +502,57 @@ count turtles
 1
 11
 
-INPUTBOX
-785
-13
-958
-73
-salary-increase-percent-range-min
-0.01
+MONITOR
+789
+300
+887
+346
+NIL
+quad-one-price
+17
 1
-0
-Number
+11
+
+MONITOR
+906
+298
+1004
+344
+NIL
+quad-two-price
+17
+1
+11
+
+MONITOR
+788
+347
+895
+393
+NIL
+quad-three-price
+17
+1
+11
+
+MONITOR
+903
+348
+1004
+394
+NIL
+quad-four-price
+17
+1
+11
 
 INPUTBOX
 785
-74
-959
-134
-salary-increase-percent-range-max
-0.1
-1
-0
-Number
-
-INPUTBOX
-786
-163
-941
-223
-starting-cash-range-min
-1.0
-1
-0
-Number
-
-INPUTBOX
-786
-224
-941
-284
-starting-cash-range-max
-100.0
+68
+940
+128
+number-of-quadrants
+10.0
 1
 0
 Number
