@@ -107,15 +107,6 @@ to set-quadrant-colors
         [ set quadrant 4
           set pcolor 62 ]]]] ;; green
 
-  let pxcor-count min-pxcor
-  let add-width ((min-pxcor * -1) + max-pxcor) / number-of-quadrants
-  let i 0
-  while [pxcor > pxcor-count ]
-  [ set pxcor-count pxcor-count + add-width
-    if pxcor >= pxcor-count
-    [ let the-quad item i quadrants
-      set pcolor item 0 the-quad
-      set i i + 1 ] ]
 end
 
 to setup
@@ -506,7 +497,7 @@ MONITOR
 789
 300
 887
-346
+345
 NIL
 quad-one-price
 17
@@ -517,7 +508,7 @@ MONITOR
 906
 298
 1004
-344
+343
 NIL
 quad-two-price
 17
@@ -528,7 +519,7 @@ MONITOR
 788
 347
 895
-393
+392
 NIL
 quad-three-price
 17
@@ -539,7 +530,7 @@ MONITOR
 903
 348
 1004
-394
+393
 NIL
 quad-four-price
 17
@@ -552,7 +543,7 @@ INPUTBOX
 940
 128
 number-of-quadrants
-10.0
+15.0
 1
 0
 Number
