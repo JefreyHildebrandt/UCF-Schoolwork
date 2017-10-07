@@ -384,10 +384,10 @@ ticks
 30.0
 
 SLIDER
-5
-74
+1
+73
 261
-108
+106
 %-similar-wanted
 %-similar-wanted
 0
