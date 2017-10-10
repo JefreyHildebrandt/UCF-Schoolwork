@@ -28,17 +28,24 @@ to setup
       ]
     ]
   ]
+  reset-ticks
   update-turtles
   update-globals
-  reset-ticks
+  setup-HDzone
+  setup-minorityHDzone
 end
 
 to setup-HDzone
   ask patches [
-    ;;ifelse pxcor >= -3 and pxcor <= 3 and pycor >= -3 and pycor <= 3 ;; small
-    ;;ifelse pxcor >= -6 and pxcor <= 6 and pycor >= -6 and pycor <= 6 ;; medium
-    ifelse pxcor >= -12 and pxcor <= 12 and pycor >= -12 and pycor <= 12 ;; large
-    [ set pcolor white set zone 1] [set pcolor black set zone 0]
+    if hd-size = "Small"
+     [ifelse pxcor >= -3 and pxcor <= 3 and pycor >= -3 and pycor <= 3
+      [ set pcolor white set zone 1] [set pcolor black set zone 0]] ;; small
+    if hd-size = "Medium"
+     [ifelse pxcor >= -6 and pxcor <= 6 and pycor >= -6 and pycor <= 6
+      [ set pcolor white set zone 1] [set pcolor black set zone 0]] ;; medium
+    if hd-size = "Large"
+     [ifelse pxcor >= -9 and pxcor <= 9 and pycor >= -9 and pycor <= 9
+      [ set pcolor white set zone 1] [set pcolor black set zone 0]] ;; large
   ]
 end
 
@@ -57,6 +64,7 @@ to go
   move-unhappy-turtles
   update-turtles
   update-globals
+  time-regression
   tick
 end
 
@@ -117,6 +125,14 @@ to update-globals
   let total-neighbors sum [ total-nearby ] of turtles
   set percent-similar (similar-neighbors / total-neighbors) * 100
   set percent-unhappy (count turtles with [ not happy? ]) / (count turtles) * 100
+end
+
+to time-regression
+  if time-factor = True[
+   if ticks mod 5 = 0 and ticks > 0 [
+    set %-similar-wanted (%-similar-wanted - 1)
+   ]
+  ]
 end
 
 
@@ -199,7 +215,7 @@ SLIDER
 %-similar-wanted
 0
 100
-70.0
+60.0
 1
 1
 %
@@ -257,10 +273,10 @@ NIL
 0
 
 CHOOSER
-58
-302
-207
-347
+10
+324
+159
+369
 visualization
 visualization
 "old" "square-x"
@@ -275,7 +291,7 @@ density
 density
 50
 99
-99.0
+90.0
 1
 1
 %
@@ -321,23 +337,6 @@ count turtles
 1
 11
 
-BUTTON
-39
-229
-149
-262
-NIL
-setup-HDzone
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 MONITOR
 818
 207
@@ -371,33 +370,16 @@ count (turtles-on patches with [zone = 1]) with [color = 43]
 1
 11
 
-BUTTON
-138
-229
-225
-262
-setup-minority
-setup-minorityHDzone
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
-23
-265
-240
-298
+27
+234
+244
+267
 proportion-of-poor-in-HD-zone
 proportion-of-poor-in-HD-zone
 0
 1
-0.3
+0.8
 0.1
 1
 NIL
@@ -454,6 +436,27 @@ count turtles with [ color = 43 ]
 1
 1
 11
+
+CHOOSER
+9
+272
+147
+317
+hd-size
+hd-size
+"Small" "Medium" "Large"
+2
+
+SWITCH
+155
+278
+272
+311
+time-factor
+time-factor
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -878,7 +881,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.1
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
