@@ -359,8 +359,8 @@ end
 GRAPHICS-WINDOW
 353
 10
-771
-429
+769
+427
 -1
 -1
 8.0
@@ -387,12 +387,12 @@ SLIDER
 5
 74
 261
-108
+107
 %-similar-wanted
 %-similar-wanted
 0
 100
-90.0
+52.0
 1
 1
 %
@@ -458,7 +458,7 @@ density
 density
 1
 99
-10.0
+51.0
 1
 1
 %
@@ -508,7 +508,7 @@ MONITOR
 232
 192
 342
-238
+237
 NIL
 percent-unhappy
 17
@@ -519,7 +519,7 @@ MONITOR
 235
 248
 333
-294
+293
 NIL
 percent-moved
 17
@@ -548,7 +548,7 @@ TEXTBOX
 825
 272
 925
-286
+290
 NIL
 11
 0.0
@@ -593,10 +593,10 @@ SWITCH
 488
 438
 624
-472
+471
 print-output?
 print-output?
-0
+1
 1
 -1000
 
@@ -604,7 +604,7 @@ SLIDER
 5
 40
 261
-74
+73
 %-red
 %-red
 0
@@ -633,10 +633,10 @@ NIL
 1
 
 BUTTON
-238
-441
-338
-475
+254
+438
+354
+472
 clear-output
 clear-output
 NIL
@@ -647,6 +647,16 @@ NIL
 NIL
 NIL
 NIL
+1
+
+TEXTBOX
+39
+474
+1185
+544
+* the 'print-output?' toggle toggles printing information about the regions every tick\n* the 'print-regions-output' button prints the current information about each region. It's number, the price to move there, and the re/blue ratio\n* The region numbers start with the bottom-left most region at 0 going right, counting up 1, then once the right-most is selected, going up one row to the left-most cell until the 'number-of-regions' number set above is reached\n* The 'print-turtle-stats' prints the number of each type of turtle, how much money each of the turtles of those type have, how many of each color there are, and the shape that represents them
+11
+0.0
 1
 
 @#$#@#$#@

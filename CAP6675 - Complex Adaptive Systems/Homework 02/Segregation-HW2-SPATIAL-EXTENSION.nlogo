@@ -1,355 +1,122 @@
 globals [
+  percent-similar  ;; what is avg percent of a turtle's neighbors are the same color as that turtle?
   percent-unhappy  ;; what percent of the turtles are unhappy?
-  percent-moved
-  regions
-  reg-color ;; 0
-  reg-number ;; 1
-  btm-left-x ;; 2
-  btm-left-y ;; 3
-  price ;; 4
-  reds ;; 5
-  blues ;; 6
-  empty-patches ;; 7
-
-  reg-width
-  reg-height
-]
-
-turtles-own [
-  happy?           ;; for each turtle, indicates whether at least %-similar-wanted percent of
-                   ;;   that turtle's neighbors are the same color as the turtle
-  moved?
-  cash
-  wealth-type
 ]
 
 patches-own [
-  region
+  zone             ;; HD zones designated as zone 1 and regular zones as zone 2
 ]
 
-to update-regions
-  let new-regions (list)
-  foreach regions
-  [cur-reg ->
-    ;; set price
-    let turt-list (turtles with [region = (item reg-number cur-reg)])
-    ifelse (count turt-list > 0)
-    [ set cur-reg replace-item price cur-reg (mean [cash] of turt-list)]
-    [ set cur-reg replace-item price cur-reg  0]
-
-    ;; set red count
-    set cur-reg replace-item reds cur-reg count turtles with [color = red and region = item reg-number cur-reg]
-
-    ;; set blue count
-    set cur-reg replace-item blues cur-reg count turtles with [color = sky and region = item reg-number cur-reg]
-
-    ;; set empty patches
-    set cur-reg replace-item empty-patches cur-reg (get-free-patches (item reg-number cur-reg))
-    set new-regions lput cur-reg new-regions
-  ]
-  set regions new-regions
-end
-
-to create-regions
-  let minx min-pxcor
-  let miny min-pycor
-
-  set reg-color 0
-  set reg-number 1
-  set btm-left-x 2
-  set btm-left-y 3
-  set price 4
-  set reds 5
-  set blues 6
-  set empty-patches 7
-
-  if minx < 0
-  [set minx minx * -1]
-
-  if miny < 0
-  [set miny miny * -1]
-
-  set reg-width floor ((minx + max-pxcor) / (sqrt number-of-regions))
-  set reg-height floor ((miny + max-pycor) / (sqrt number-of-regions))
-
-  set regions (list)
-  let i 0
-  let curx min-pxcor
-  let cury min-pycor
-
-  ;; sets random region colors for each region
-  while [i < number-of-regions ]
-  [ let color-not-red-or-blue random 140
-    set regions lput (list color-not-red-or-blue i curx cury -1 -1 -1 -1) regions
-    ifelse (curx + reg-width >= max-pxcor)
-    [set curx min-pxcor
-     set cury (cury + reg-height)]
-    [set curx (curx + reg-width)]
-    set i i + 1 ]
-end
-
-to set-region-colors
-  set region -1
-  set pcolor black
-  foreach regions
-  [cur-reg ->
-   let x item btm-left-x cur-reg
-   let y item btm-left-y cur-reg
-   if (pxcor >= x and pycor >= y and pxcor < x + reg-width and pycor < y + reg-height)
-   [ set region item reg-number cur-reg
-     set pcolor item reg-color cur-reg ]]
-end
+turtles-own [
+  happy?           ;; indicates whether at least %-similar-wanted percent of that turtle's neighbors are the same color as the turtle
+  similar-nearby   ;; how many neighboring patches have a turtle with my color?
+  similar-nearby1  ;; how many rich neighboring patches does a rich agent in zone 1 have? (sums all similar neighbors in immediate neighborhood and in zone 1)
+  other-nearby     ;; how many have a turtle of another color?
+  total-nearby     ;; sum of previous two variables
+  nearby           ;; how many similar neighboring patches are in zone 1?
+  updated-nearby   ;; subtract nearby from similar nearby to remove redundant counts
+  HDneighbors      ;; how many similar patches are in zone 1?
+]
 
 to setup
   clear-all
-  create-regions
-  ;; create turtles on random patches.
   ask patches [
-    set-region-colors
     if random 100 < density [   ;; set the occupancy density
-      if region != -1
-      [ sprout 1 [
-        ifelse random 100 < %-red
-        [set color red]
-        [set color sky]
-        let wealth-level random 100
-        ifelse wealth-level = 0
-        [ set wealth-type "Top 1%"]
-        [ ifelse wealth-level >= 1 and wealth-level < 5
-          [ set wealth-type "Next 4%"]
-          [ ifelse wealth-level >= 5 and wealth-level < 10
-            [ set wealth-type "Next 5%"]
-            [ ifelse wealth-level >= 10 and wealth-level < 20
-              [ set wealth-type "Next 10%"]
-              [ ifelse wealth-level >= 20 and wealth-level < 40
-                [ set wealth-type "Upper Middle 20%"]
-                [ ifelse wealth-level >= 40 and wealth-level < 60
-                  [ set wealth-type "Middle 20%"]
-                  [ set wealth-type "Bottom 40%"]]]]]]
-      ]]
+      sprout 1 [
+        set color one-of [43 115]
+        ;; set %-similar-wanted random-normal 0.5 0.25
+      ]
     ]
   ]
-  set-cash
-  update-regions
-  set-turtle-happy
-  if print-output?
-  [print-regions-output]
+  update-turtles
+  update-globals
   reset-ticks
 end
 
-to set-cash
-  let total-turtles count turtles
-  let top-1%-cash total-money * .35
-  let next-4%-cash total-money * .27
-  let next-5%-cash total-money * .11
-  let next-10%-cash total-money * .12
-  let upper-middle-20%-cash total-money * .11
-  let middle-20%-cash total-money * .04
-  let bottom-40%-cash total-money * .01
-
-  let total-1% count turtles with [wealth-type = "Top 1%"]
-  if total-1% > 0
-  [ask turtles with [wealth-type = "Top 1%"]
-   [ set cash top-1%-cash / total-1%
-     set shape "box"
-     set moved? false]]
-
-  let total-4% count turtles with [wealth-type = "Next 4%"]
-  if total-4% > 0
-  [ask turtles with [wealth-type = "Next 4%"]
-  [ set cash next-4%-cash / total-4%
-    set shape "airplane"
-    set moved? false]]
-
-  let total-5% count turtles with [wealth-type = "Next 5%"]
-  if total-5% > 0
-  [ask turtles with [wealth-type = "Next 5%"]
-  [ set cash next-5%-cash / total-5%
-    set shape "house"
-    set moved? false]]
-
-  let total-10% count turtles with [wealth-type = "Next 10%"]
-  if total-10% > 0
-  [ask turtles with [wealth-type = "Next 10%"]
-  [ set cash next-10%-cash / total-10%
-    set shape "truck"
-    set moved? false]]
-
-  let total-u-m-20% count turtles with [wealth-type = "Upper Middle 20%"]
-  if total-u-m-20% > 0
-  [ask turtles with [wealth-type = "Upper Middle 20%"]
-  [ set cash upper-middle-20%-cash / total-u-m-20%
-    set shape "square"
-    set moved? false]]
-
-  let total-m-20% count turtles with [wealth-type = "Middle 20%"]
-  if total-m-20% > 0
-  [ask turtles with [wealth-type = "Middle 20%"]
-  [ set cash middle-20%-cash / total-m-20%
-    set shape "square-x"
-    set moved? false]]
-
-  let total-b-40% count turtles with [wealth-type = "Bottom 40%"]
-  if total-b-40% > 0
-  [ask turtles with [wealth-type = "Bottom 40%"]
-  [ set cash bottom-40%-cash / total-b-40%
-    set shape "square 2"
-    set moved? false]]
+to setup-HDzone
+  ask patches [
+    ;;ifelse pxcor >= -3 and pxcor <= 3 and pycor >= -3 and pycor <= 3 ;; small
+    ;;ifelse pxcor >= -6 and pxcor <= 6 and pycor >= -6 and pycor <= 6 ;; medium
+    ifelse pxcor >= -12 and pxcor <= 12 and pycor >= -12 and pycor <= 12 ;; large
+    [ set pcolor white set zone 1] [set pcolor black set zone 0]
+  ]
 end
+
+to setup-minorityHDzone
+  ask turtles-on patches with [zone = 1]
+  [set color 43]
+  ask n-of (proportion-of-poor-in-HD-zone * count turtles-on patches with [zone = 1]) turtles-on patches with [zone = 1]
+  [ set color 115 ]
+end
+
+
 
 ;; run the model for one tick
 to go
+  if all? turtles [ happy? ] [ stop ]
+  move-unhappy-turtles
   update-turtles
-  update-regions
-  set-turtle-happy
-  if print-output?
-  [ print-regions-output]
-  if all? turtles [ not moved? ] [ stop ]
+  update-globals
   tick
 end
 
-to set-turtle-happy
-  ask turtles
-  [ let cur-reg item region regions
-    set happy? meets-ratio color (item reds cur-reg) (item blues cur-reg)]
-  set percent-unhappy (count turtles with [ not happy? ]) / (count turtles) * 100
-  set percent-moved (count turtles with [ moved? ]) / (count turtles) * 100
+
+;; unhappy turtles try a new spot
+to move-unhappy-turtles
+  ask turtles with [ not happy? ]
+    [ find-new-spot ]
 end
 
-to move-to-different-neighborhood
-  let reg-num 0
-  let reg-price 1
-  let reg-meets-ratio 2
-  let reg-has-free-space 3
-
-  let reg-info (list)
-  foreach regions
-  [cur-reg ->
-   set reg-info lput (list (item reg-number cur-reg) (item price cur-reg) (meets-ratio color (item reds cur-reg) (item blues cur-reg)) has-free-space (item reg-number cur-reg)) reg-info]
-  let my-reg item (region) reg-info
-
-  ;; region info sorted by highest price to lowest
-  set reg-info sort-by [[list-one list-two] -> item reg-price list-one > item reg-price list-two] reg-info
-  set moved? false
-  ifelse (item reg-meets-ratio my-reg)
-  [ let passed-my-reg? false
-    foreach reg-info
-    [ cur-reg ->
-       if not passed-my-reg?
-        [ ifelse item reg-num cur-reg = item reg-num my-reg
-          [ set passed-my-reg? true ]
-          [ if item reg-has-free-space cur-reg
-            [ if cash > item reg-price cur-reg
-              [ if item reg-meets-ratio cur-reg
-                [ move-turtle-to-free-space item reg-num cur-reg
-                  set moved? true ]]]]]]]
-  [ foreach reg-info
-    [ cur-reg ->
-      if item reg-has-free-space cur-reg
-      [ if cash >= item reg-price cur-reg
-        [ if item reg-meets-ratio cur-reg
-          [ move-turtle-to-free-space item reg-num cur-reg
-            set moved? true ]]]]]
-end
-
-to-report meets-ratio [my-color red-count blue-count]
-  let my-color-count 0
-  ifelse my-color = red
-  [set my-color-count red-count]
-  [set my-color-count blue-count]
-  report my-color-count >= (%-similar-wanted * (red-count + blue-count) / 100)
-end
-
-to move-turtle-to-free-space [region-number]
-  let region-to-move-to item region-number regions
-  let empty-list-for-reg item empty-patches region-to-move-to
-  let move-to-this-patch item 0 empty-list-for-reg
-  set empty-list-for-reg remove-item 0 empty-list-for-reg
-  ;;set cur-reg replace-item price cur-reg  0
-  set region-to-move-to replace-item empty-patches region-to-move-to empty-list-for-reg
-
-  ifelse color = red
-  [ let red-num-add item reds region-to-move-to + 1
-    set region-to-move-to replace-item reds region-to-move-to red-num-add
-    let cur-reg item region regions
-    let blue-num-sub item blues cur-reg - 1
-    set cur-reg replace-item blues cur-reg blue-num-sub
-    set regions replace-item region regions cur-reg]
-  [if color = sky
-  [ let red-num-sub item reds region-to-move-to - 1
-    set region-to-move-to replace-item reds region-to-move-to red-num-sub
-    let cur-reg item region regions
-    let blue-num-add item blues cur-reg + 1
-    set cur-reg replace-item blues cur-reg blue-num-add
-    set regions replace-item region regions cur-reg]]
-
-  set regions replace-item region-number regions region-to-move-to
-  ;; sets x and y
-  setxy (item 0 move-to-this-patch) (item 1 move-to-this-patch)
-end
-
-to print-regions-output
-  foreach regions
-  [cur-reg ->
-   output-type "Region "
-   output-type item reg-number cur-reg
-   output-type ", Avg Price $"
-   output-type floor item price cur-reg
-   output-type ", Reds/Blues "
-   output-type item reds cur-reg
-   output-type "/"
-   output-type item blues cur-reg
-   output-print "" ]
-  output-print ""
-end
-
-to print-turtle-stats
-  print-individual-turtle "Top 1%"
-  print-individual-turtle "Next 4%"
-  print-individual-turtle "Next 5%"
-  print-individual-turtle "Next 10%"
-  print-individual-turtle "Upper Middle 20%"
-  print-individual-turtle "Middle 20%"
-  print-individual-turtle "Bottom 40%"
-  output-print ""
-end
-
-to print-individual-turtle [wealth]
-  let printed false
-  ask turtles with [wealth-type = wealth]
-  [ if not printed
-    [ output-type wealth-type
-      output-type " (Red "
-      output-type count turtles with [wealth-type = wealth and color = red]
-      output-type " Blue "
-      output-type count turtles with [wealth-type = wealth and color = sky]
-      output-type ") $"
-      output-type floor cash
-      output-type " "
-      output-type shape
-      output-print ""
-      ]
-    set printed true]
-end
-
-to-report has-free-space [region-number]
-  let region-to-check-space item region-number regions
-  let empty-list item empty-patches region-to-check-space
-  let empty-length length empty-list
-  report (empty-length > 0)
-end
-
-to-report get-free-patches [region-number]
-  let open-list (list)
-  ask patches with [region = region-number and count turtles-here < 1]
-  [set open-list lput (list pxcor pycor) open-list]
-  report open-list
+;; move until we find an unoccupied spot
+to find-new-spot
+  rt random-float 360
+  fd random-float 10
+  if any? other turtles-here [ find-new-spot ] ;; keep going until we find an unoccupied patch
+  move-to patch-here  ;; move to center of patch
 end
 
 to update-turtles
-  ask turtles [
-    move-to-different-neighborhood
+  ask turtles
+    [
+     ifelse (zone = 1) and (color = 43)
+      [
+      set other-nearby count (turtles-on neighbors) with [ color != [ color ] of myself ]
+      set similar-nearby count (turtles-on neighbors) with [ color = [ color ] of myself ]
+      set HDneighbors count (turtles-on patches with [zone = 1]) with [color = [color] of myself]
+      set nearby count (turtles-on neighbors with [zone = 1]) with [color = [color] of myself]
+      set updated-nearby (similar-nearby - nearby)
+      set similar-nearby1 (updated-nearby + HDneighbors)
+      set total-nearby (similar-nearby + other-nearby) ;;
+      set happy? similar-nearby1 >= ((%-similar-wanted) * total-nearby / 100)
+
+      ]
+    [
+     ifelse (color = 115) [
+        set similar-nearby count (turtles-on neighbors)  with [ color = [ color ] of myself ]
+        set other-nearby count (turtles-on neighbors) with [ color != [ color ] of myself ]
+        set total-nearby similar-nearby + other-nearby
+        set happy? similar-nearby >= (%-similar-wanted * total-nearby / 100)]
+      [
+        if (zone != 1) and (color = 43) [
+         set similar-nearby count (turtles-on neighbors)  with [ color = [ color ] of myself ]
+         set other-nearby count (turtles-on neighbors) with [ color != [ color ] of myself ]
+         set total-nearby similar-nearby + other-nearby
+         set happy? similar-nearby >= (%-similar-wanted * total-nearby / 100)]
+      ]
+    ]
+
+    if visualization = "old" [ set shape "person" ]
+    if visualization = "square-x" [
+      ifelse happy? [ set shape "star" ] [ set shape "circle" ]]
   ]
+end
+
+
+to update-globals
+  let similar-neighbors sum [ similar-nearby ] of turtles
+  let total-neighbors sum [ total-nearby ] of turtles
+  set percent-similar (similar-neighbors / total-neighbors) * 100
+  set percent-unhappy (count turtles with [ not happy? ]) / (count turtles) * 100
 end
 
 
@@ -357,13 +124,13 @@ end
 ; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-353
+276
 10
-771
-429
+714
+449
 -1
 -1
-8.0
+8.4314
 1
 10
 1
@@ -383,26 +150,66 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-SLIDER
+MONITOR
+719
+408
+804
+453
+% unhappy
+percent-unhappy
 1
-73
-261
-106
+1
+11
+
+MONITOR
+717
+158
+792
+203
+% similar
+percent-similar
+1
+1
+11
+
+PLOT
+718
+10
+967
+153
+Percent Similar
+time
+%
+0.0
+5.0
+0.0
+100.0
+true
+false
+"" ""
+PENS
+"percent" 1.0 0 -2674135 true "" "plot percent-similar"
+
+SLIDER
+9
+156
+269
+189
 %-similar-wanted
 %-similar-wanted
 0
 100
-90.0
+70.0
 1
 1
 %
 HORIZONTAL
 
 BUTTON
-4
-109
-84
-142
+6
+193
+86
+226
 setup
 setup
 NIL
@@ -416,10 +223,10 @@ NIL
 1
 
 BUTTON
-183
-109
-263
-142
+193
+193
+273
+226
 go
 go
 T
@@ -433,10 +240,10 @@ NIL
 0
 
 BUTTON
-88
-109
-178
-142
+91
+193
+187
+226
 go once
 go
 NIL
@@ -449,136 +256,78 @@ NIL
 NIL
 0
 
-SLIDER
-6
-7
-261
-40
-density
-density
+CHOOSER
+58
+302
+207
+347
+visualization
+visualization
+"old" "square-x"
 1
+
+SLIDER
+11
+119
+266
+152
+density
+density
+50
 99
-10.0
+99.0
 1
 1
 %
 HORIZONTAL
 
-MONITOR
-266
-139
-332
-184
-# agents
-count turtles
-1
-1
-11
-
-INPUTBOX
-265
-7
-351
-67
-number-of-regions
-50.0
-1
-0
-Number
-
 PLOT
-20
-151
-220
-301
+969
+10
+1219
+160
 Number-unhappy
 NIL
 NIL
 0.0
 10.0
 0.0
-10.0
+100.0
 true
 false
 "" ""
 PENS
-"default" 1.0 0 -10899396 true "" "plot count turtles with [not happy?]"
+"default" 1.0 0 -14439633 true "" "plot count turtles with [not happy?]"
 
 MONITOR
-232
-192
-342
-238
-NIL
-percent-unhappy
-17
+718
+360
+806
+405
+num-unhappy
+count turtles with [not happy?]
+1
 1
 11
 
 MONITOR
-235
-248
-333
-294
-NIL
-percent-moved
-17
+718
+206
+807
+251
+# agents
+count turtles
+1
 1
 11
-
-PLOT
-21
-314
-221
-464
-Number-moved
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles with [moved?]"
-
-TEXTBOX
-825
-272
-925
-286
-NIL
-11
-0.0
-1
-
-OUTPUT
-776
-11
-1231
-473
-11
-
-INPUTBOX
-266
-78
-351
-138
-total-money
-1000000.0
-1
-0
-Number
 
 BUTTON
-628
-438
-772
-472
-print-regions-output
-print-regions-output
+39
+229
+149
+262
+NIL
+setup-HDzone
 NIL
 1
 T
@@ -589,65 +338,122 @@ NIL
 NIL
 1
 
-SWITCH
-488
-438
-624
-472
-print-output?
-print-output?
-0
+MONITOR
+818
+207
+950
+252
+# of agents in HD zone
+count turtles-on patches with [zone = 1]
+17
 1
--1000
+11
+
+MONITOR
+818
+302
+951
+347
+# of poor in HD zone
+count (turtles-on patches with [zone = 1]) with [color = 115]
+1
+1
+11
+
+MONITOR
+818
+255
+950
+300
+# of rich in HD zone
+count (turtles-on patches with [zone = 1]) with [color = 43]
+1
+1
+11
+
+BUTTON
+138
+229
+225
+262
+setup-minority
+setup-minorityHDzone
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 SLIDER
-5
-40
-261
-74
-%-red
-%-red
+23
+265
+240
+298
+proportion-of-poor-in-HD-zone
+proportion-of-poor-in-HD-zone
 0
-100
-50.0
 1
+0.3
+0.1
 1
 NIL
 HORIZONTAL
 
-BUTTON
-358
-438
-482
-472
-NIL
-print-turtle-stats
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
+TEXTBOX
+66
+27
+216
+45
+gold denotes rich agent
+11
+43.0
 1
 
-BUTTON
-238
-441
-338
-475
-clear-output
-clear-output
-NIL
+TEXTBOX
+67
+40
+217
+58
+purple denotes poor agent
+11
+115.0
 1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
+
+TEXTBOX
+67
+55
+239
+125
+star denotes happy\ncircle denotes not happy\nblack patch denotes regular zone\nwhite patch denotes HD zone
+11
+0.0
 1
+
+MONITOR
+718
+301
+812
+346
+# of poor agents
+count turtles with [color = 115]
+17
+1
+11
+
+MONITOR
+718
+253
+808
+298
+# of rich agents
+count turtles with [ color = 43 ]
+1
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1072,7 +878,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
