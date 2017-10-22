@@ -9,7 +9,7 @@ class BarberSchedule:
 
     def start(self):
         print("d =",self.dollarDifference)
-        print("Services:")
+        print("Total Services:",len(self.services),"Services:")
         for service in self.services:
             print(service," ",end="")
         print()
@@ -29,11 +29,12 @@ class BarberSchedule:
                 self.barbers.insert(highest, self.barbers.pop(i))
             if len(self.services) <= 0:
                 return True
+
     def printBarbers(self):
         for barber in self.barbers:
             print(barber.name,",",barber.earnings," ", end="")
         print()
-        
+
 class Barber:
     def __init__(self, name):
         self.earnings = 0
@@ -43,7 +44,7 @@ def main():
     barbers = [Barber("A"), Barber("B"), Barber("C"), Barber("D"), Barber("E")]
     services = deque([])
     servicePrices = [10, 20, 30, 40]
-    for x in range(random.randint(10, 50)):
+    for x in range(random.randint(0, 100)):
         services.append(servicePrices[random.randint(0, 3)])
     random.shuffle(barbers)
     dollarDifference = servicePrices[random.randint(0, 3)]
