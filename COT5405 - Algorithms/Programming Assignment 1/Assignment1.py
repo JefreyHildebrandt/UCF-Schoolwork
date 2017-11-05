@@ -10,8 +10,13 @@ class BarberSchedule:
     def start(self):
         print("d =",self.dollarDifference)
         print("Total Services:",len(self.services),"Services:")
+        count = 1
         for service in self.services:
-            print(service," ",end="")
+            if count % 12 != 0:
+                print(service," ",end="")
+            else:
+                print(service)
+            count += 1
         print()
         print("Barber order:")
         self.printBarbers()
