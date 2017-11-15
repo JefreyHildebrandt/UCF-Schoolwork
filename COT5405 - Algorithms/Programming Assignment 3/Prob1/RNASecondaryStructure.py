@@ -1,5 +1,4 @@
-from math import ceil
-
+# author: Jeff Hildebrandt
 class RnaSecondaryStructure:
     def __init__(self, molecule):
         self.molecule = molecule
@@ -48,6 +47,7 @@ def main():
     molecule = ["A", "U", "G", "G", "C", "U", "A", "C", "C", "G", "G", "U", "C", "G", "A", "U", "U", "G", "A", "G", "C", "G", "C", "C", "A", "A", "U", "G", "U", "A", "A", "U", "C", "A", "U", "U"]
     # molecule = ["A", "C", "C", "G", "G", "U", "A", "G", "U"]
     # molecule = ["A", "C", "C", "G", "G", "U", "A", "G"]
+    # molecule = ["A", "U", "G", "U", "G", "G", "C", "C", "A", "U"]
     rnaSecondaryStructure = RnaSecondaryStructure(molecule)
     rnaSecondaryStructure.start()
 main()
