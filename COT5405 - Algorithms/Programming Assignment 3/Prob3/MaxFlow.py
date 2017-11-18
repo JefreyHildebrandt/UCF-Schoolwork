@@ -48,9 +48,30 @@ class MaxFlow:
                 cur = self.augPath[cur]
 
     def printFlowGraph(self):
-        print("max flow = ", self.maxFlow)
+        print("max flow =", self.maxFlow)
         print("Graph for max flow:")
+        print("  | ", end="")
         for i in range(len(self.graph)):
+            if i == self.s:
+                print("s", end="")
+            elif i == self.t:
+                print("t", end="")
+            else:
+                print(i + 1, end="")
+            print("   ", end="")
+        print()
+        for i in range(len(self.graph)):
+            print("----", end="")
+        print("-", end="")
+        print()
+        for i in range(len(self.graph)):
+            if i == self.s:
+                print("s", end="")
+            elif i == self.t:
+                print("t", end="")
+            else:
+                print(i + 1, end="")
+            print(" | ", end="")
             for j in range(len(self.graph)):
                 print(self.graph[i][j], " ", end="")
                 if self.graph[i][j] / 10 < 1:
