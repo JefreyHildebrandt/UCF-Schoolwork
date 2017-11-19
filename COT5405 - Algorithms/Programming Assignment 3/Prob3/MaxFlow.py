@@ -62,7 +62,7 @@ class MaxFlow:
         print()
         for i in range(len(self.graph)):
             print("----", end="")
-        print("-", end="")
+        print("--", end="")
         print()
         for i in range(len(self.graph)):
             if i == self.s:

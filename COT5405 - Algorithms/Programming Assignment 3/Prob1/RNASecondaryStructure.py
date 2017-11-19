@@ -5,10 +5,8 @@ class RnaSecondaryStructure:
         self.y =  int(len(molecule) / 2)
         self.x = self.y
         self.kStart = int(len(molecule) / 2) + 1
-        print(len(molecule))
         if len(molecule) % 2 == 0:
             self.x -= 1
-        print(self.x, " ", self.y)
         self.M = [[0 for x in range(self.x)] for y in range(self.y)]
         self.n = len(molecule)
     def start(self):
@@ -16,7 +14,24 @@ class RnaSecondaryStructure:
             for i in range(self.n - k):
                 j = i + k
                 self.M[i][j - self.kStart] = self.computeM(i, j)
-        print(self.M)
+        backwards = len(self.M)
+        for i in reversed(self.M):
+            if backwards / 10 < 1:
+                print(" ", end="")
+            print(backwards, "| ", end="")
+            for j in i:
+                print(j, "  ", end="")
+            print()
+            backwards -= 1
+        print("   ", end="")
+        for i in range(self.kStart + 1, self.n + 1):
+            print("----", end="")
+        print()
+        print("    ", end="")
+        for i in range(self.kStart + 1, self.n + 1):
+            if i / 10 < 1:
+                print(" ", end="")
+            print(i, " ", end="")
 
     def computeM(self, i, j):
         if i >= j-4:
@@ -41,13 +56,10 @@ class RnaSecondaryStructure:
     def OPT(self, i, j):
         if (j - self.kStart < 0 or j - self.kStart >= self.x or i < 0 or i >= self.y):
             return 0
-        print(i, " ", j)
         return self.M[i][j - self.kStart]
 def main():
-    molecule = ["A", "U", "G", "G", "C", "U", "A", "C", "C", "G", "G", "U", "C", "G", "A", "U", "U", "G", "A", "G", "C", "G", "C", "C", "A", "A", "U", "G", "U", "A", "A", "U", "C", "A", "U", "U"]
-    # molecule = ["A", "C", "C", "G", "G", "U", "A", "G", "U"]
-    # molecule = ["A", "C", "C", "G", "G", "U", "A", "G"]
-    # molecule = ["A", "U", "G", "U", "G", "G", "C", "C", "A", "U"]
+    molecule = ["A","U","G","G","C","U","A","C","C","G","G","U","C","G","A","U","U","G","A","G","C","G","C","C","A","A","U","G","U","A","A","U","C","A","U","U"]
     rnaSecondaryStructure = RnaSecondaryStructure(molecule)
     rnaSecondaryStructure.start()
 main()
+#http://math.mit.edu/classes/18.417/Slides/rna-prediction-nussinov.pdf
