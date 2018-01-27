@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1effa6b-25dc-44eb-9c85-a331cb16636d" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../../../CAP6675 - Complex Adaptive Systems/~$allpox.docx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../../../CAP6675 - Complex Adaptive Systems/~WRL0005.tmp" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../../CAP6675 - Complex Adaptive Systems/FinalExamReview.docx" afterPath="$PROJECT_DIR$/../../../CAP6675 - Complex Adaptive Systems/FinalExamReview.docx" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,7 +21,7 @@
       <file leaf-file-name="RNASecondaryStructure.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RNASecondaryStructure.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
+            <state relative-caret-position="918">
               <caret line="54" column="0" lean-forward="false" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
               <folding />
             </state>
@@ -43,7 +42,7 @@
         <entry file="file://$PROJECT_DIR$/../Prob3/MaxFlow.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="674">
-              <caret line="88" column="48" lean-forward="true" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
+              <caret line="88" column="48" lean-forward="false" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
               <folding>
                 <element signature="e#27#56#0" expanded="true" />
               </folding>
@@ -107,7 +106,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -128,6 +126,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -286,6 +285,32 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/RNASecondaryStructure.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="54" column="0" lean-forward="false" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Prob2/SequenceAlignment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="42" column="22" lean-forward="false" selection-start-line="42" selection-start-column="22" selection-end-line="42" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Prob3/MaxFlow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1462">
+          <caret line="88" column="48" lean-forward="true" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
+          <folding>
+            <element signature="e#27#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RNASecondaryStructure.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
@@ -411,7 +436,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/RNASecondaryStructure.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
+        <state relative-caret-position="918">
           <caret line="54" column="0" lean-forward="false" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
           <folding />
         </state>
@@ -420,7 +445,7 @@
     <entry file="file://$PROJECT_DIR$/../Prob3/MaxFlow.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="674">
-          <caret line="88" column="48" lean-forward="true" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
+          <caret line="88" column="48" lean-forward="false" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
           <folding>
             <element signature="e#27#56#0" expanded="true" />
           </folding>
