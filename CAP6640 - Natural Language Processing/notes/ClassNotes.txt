@@ -1,0 +1,22 @@
+Text Similarity
+
+- going over the algorithms covered in algorithm design.  Such as RNA structures and Levenshtein
+- confustion matrix for spelling errors is a way to weight the likelyhood of a spelling error due to locations on a keyboard. p30 in slides
+
+Language Modeling
+
+- have a table that lists the probability of a word following another, then for a sentence multiply the individual probabilities to find the probability of that one sentence occuring
+- instead of multiplying probabilities, you need to add logs of the probabilities.  This avoids underflow (a number too small to differentiate)
+- a unigram measures every word individually and the probability of what word will follow
+- a bigram measures the two words that come before a word and the probability of what word will follow
+- a trigram measures the three words that come before a word and the probability of what word will follow
+- it makes sense to combine n-grams where you'll want to use the more difficult if there's a good probability (trigram) otherwise scale back
+
+Text Classification
+
+- P(A | B, C, D, E) means the conditional probability of A based on B, C, D, and E
+
+Sentiment Analysis
+
+- There is a cornell database that gives you positive/negative imdb reviews and classifies them p13 of sentiment slides L6
+- There are lexicons available too from Harvard and Bing Liu p28 and p29 of positive and negative words
