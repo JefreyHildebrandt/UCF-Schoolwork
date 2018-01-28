@@ -114,26 +114,62 @@ class TextSimilarityAnalysis:
         self.mis = mis
         self.match = match
         self.editdist = [[None for j in range(len(src) + 1)] for i in range(len(tgt) + 1)]
-        # initialize the values of the table
-        for i in range(len(tgt) + 1):
-            self.editdist[i][0] = 0
-        for j in range(len(src) + 1):
-            self.editdist[0][j] = 0
-        self.populateeditdisttable()
-        self.print(self.editdist)
+        self.backtrack = [["" for j in range(len(src) + 1)] for i in range(len(tgt) + 1)]
+        self.maxdist = 0
+        self.maxima = []
 
-    def populateeditdisttable(self):
+        self.populatetables()
+        self.populatealignments()
+
+        self.print()
+
+    def populatetables(self):
+        # initialize the values of the table
+        for i in range(len(self.tgt) + 1):
+            self.editdist[i][0] = 0
+        for j in range(len(self.src) + 1):
+            self.editdist[0][j] = 0
+
         for i in range(1, len(self.tgt) + 1):
             for j in range(1, len(self.src) + 1):
                 self.editdist[i][j] = self.getmax(i, j)
 
     def getmax(self, i, j) -> int:
+        maxval = 0
         match = self.mis
         if self.tgt[i-1] == self.src[j-1]:
             match = self.match
-        return max([0, self.editdist[i-1][j] + self.gap, self.editdist[i][j-1] + self.gap, self.editdist[i-1][j-1] + match])
+        left = self.editdist[i-1][j] + self.gap
+        up = self.editdist[i][j-1] + self.gap
+        diagonal = self.editdist[i-1][j-1] + match
 
-    def print(self, arr):
+        if left > maxval:
+            maxval = left
+            self.backtrack[i][j] = "LT"
+        if up > maxval:
+            maxval = up
+            self.backtrack[i][j] = "UP"
+        if diagonal > maxval:
+            maxval = diagonal
+            self.backtrack[i][j] = "DI"
+
+        if self.maxdist < maxval:
+            self.maxdist = maxval
+            self.maxima = [Point(i, j)]
+        elif self.maxdist == maxval:
+            self.maxima.append([Point(i, j)])
+
+        return maxval
+
+    def populatealignments(self):
+        for point in self.maxima:
+            alignments = deque()
+            nextpoint = point
+            while self.editdist[nextpoint.x][nextpoint.y] != 0:
+                alignments.appendleft(Alignments(source, target, action, wordlength))
+                break
+
+    def printtable(self, arr):
         firstline = "              "
         secondline = "               #   "
         for i in range(len(self.tgt) + 1):
@@ -147,7 +183,7 @@ class TextSimilarityAnalysis:
                 else:
                     firstline += ".." + str(i)[-3:]
             tgtindex = i - 1
-            if tgtindex >= 0 and tgtindex < len(self.tgt):
+            if 0 <= tgtindex and tgtindex < len(self.tgt):
                 if len(self.tgt[tgtindex]) == 1:
                     secondline += "  " + self.tgt[tgtindex]
                 elif len(self.tgt[tgtindex]) == 2:
@@ -157,19 +193,19 @@ class TextSimilarityAnalysis:
                 secondline += "  "
         print(firstline)
         print(secondline)
-        for i in range(len(self.src) + 1):
+        for j in range(len(self.src) + 1):
             nextline = ""
-            if len(str(i)) < 4:
-                for k in range(4 - len(str(i))):
+            if len(str(j)) < 4:
+                for k in range(4 - len(str(j))):
                     nextline += " "
-                nextline += str(i)
+                nextline += str(j)
             else:
-                nextline += "." + str(i)[-3:]
+                nextline += "." + str(j)[-3:]
             nextline += "    "
-            if i == 0:
+            if j == 0:
                 nextline += " #    "
             else:
-                srcindex = i - 1
+                srcindex = j - 1
                 if srcindex >= 0 and srcindex < len(self.src):
                     if len(self.src[srcindex]) == 1:
                         nextline += "  " + self.src[srcindex]
@@ -178,17 +214,40 @@ class TextSimilarityAnalysis:
                     else:
                         nextline += self.src[srcindex][:3]
                     nextline += "   "
-            for j in range(len(self.src) + 1):
+            for i in range(len(self.tgt) + 1):
                 if len(str(arr[i][j])) == 1:
                     nextline += " " + str(arr[i][j]) + "   "
                 else:
                     if len(str(arr[i][j])) < 5:
                         nextline += str(arr[i][j])
-                        for j in range(5 - len(str(arr[i][j]))):
+                        for i in range(5 - len(str(arr[i][j]))):
                             nextline += " "
                     else:
                         nextline += ".." + str(arr[i][j])[-3:]
             print(nextline)
+
+    def print(self):
+        # print results
+        print("Edit Distance Table:\n")
+        self.printtable(self.editdist)
+        print("\nBacktrace Table:\n")
+        self.printtable(self.backtrack)
+        print("\nMaximum value in distance table: " + str(self.maxdist))
+        print("\nMaxima:")
+        for point in self.maxima:
+            print("     [ " + str(point.y) + ", " + str(point.x) + " ]")
+
+class Point:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self. y = y
+
+class Alignments:
+    def __init__(self, source, target, action, wordlength):
+        self.source = source
+        self.target = target
+        self.action = action
+        self.wordlength = wordlength
 
 if __name__ == "__main__":
     tokenized = TokenizeFiles(sys.argv[1], sys.argv[2])
