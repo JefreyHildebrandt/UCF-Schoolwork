@@ -4,6 +4,7 @@
 
 import sys
 from collections import deque
+from math import ceil
 
 
 class TokenizeFiles:
@@ -117,6 +118,7 @@ class TextSimilarityAnalysis:
         self.backtrack = [["" for j in range(len(src) + 1)] for i in range(len(tgt) + 1)]
         self.maxdist = 0
         self.maxima = []
+        self.alignments = []
 
         self.populatetables()
         self.populatealignments()
@@ -130,8 +132,8 @@ class TextSimilarityAnalysis:
         for j in range(len(self.src) + 1):
             self.editdist[0][j] = 0
 
-        for i in range(1, len(self.tgt) + 1):
-            for j in range(1, len(self.src) + 1):
+        for j in range(1, len(self.src) + 1):
+            for i in range(1, len(self.tgt) + 1):
                 self.editdist[i][j] = self.getmax(i, j)
 
     def getmax(self, i, j) -> int:
@@ -157,7 +159,7 @@ class TextSimilarityAnalysis:
             self.maxdist = maxval
             self.maxima = [Point(i, j)]
         elif self.maxdist == maxval:
-            self.maxima.append([Point(i, j)])
+            self.maxima.append(Point(i, j))
 
         return maxval
 
@@ -165,9 +167,29 @@ class TextSimilarityAnalysis:
         for point in self.maxima:
             alignments = deque()
             nextpoint = point
-            while self.editdist[nextpoint.x][nextpoint.y] != 0:
-                alignments.appendleft(Alignments(source, target, action, wordlength))
-                break
+            while self.backtrack[nextpoint.x][nextpoint.y] != "":
+                backval = self.backtrack[nextpoint.x][nextpoint.y]
+
+                source = "-"
+                target = "-"
+                action = ""
+
+                if backval == "DI":
+                    source = self.src[nextpoint.y - 1]
+                    target = self.tgt[nextpoint.x - 1]
+                    if(source != target):
+                        action = "s"
+                    nextpoint = Point(nextpoint.x - 1, nextpoint.y - 1)
+                elif backval == "LT":
+                    target = self.tgt[nextpoint.x - 1]
+                    action = "i"
+                    nextpoint = Point(nextpoint.x - 1, nextpoint.y)
+                elif backval == "UP":
+                    source = self.src[nextpoint.y - 1]
+                    action = "d"
+                    nextpoint = Point(nextpoint.x, nextpoint.y - 1)
+                alignments.appendleft(Alignments(source, target, action, max([len(source), len(target)]), nextpoint))
+            self.alignments.append(alignments)
 
     def printtable(self, arr):
         firstline = "              "
@@ -185,7 +207,7 @@ class TextSimilarityAnalysis:
             tgtindex = i - 1
             if 0 <= tgtindex and tgtindex < len(self.tgt):
                 if len(self.tgt[tgtindex]) == 1:
-                    secondline += "  " + self.tgt[tgtindex]
+                    secondline += " " + self.tgt[tgtindex] + " "
                 elif len(self.tgt[tgtindex]) == 2:
                     secondline += " " + self.tgt[tgtindex]
                 else:
@@ -208,7 +230,7 @@ class TextSimilarityAnalysis:
                 srcindex = j - 1
                 if srcindex >= 0 and srcindex < len(self.src):
                     if len(self.src[srcindex]) == 1:
-                        nextline += "  " + self.src[srcindex]
+                        nextline += " " + self.src[srcindex] + " "
                     elif len(self.src[srcindex]) == 2:
                         nextline += " " + self.src[srcindex]
                     else:
@@ -235,19 +257,55 @@ class TextSimilarityAnalysis:
         print("\nMaximum value in distance table: " + str(self.maxdist))
         print("\nMaxima:")
         for point in self.maxima:
-            print("     [ " + str(point.y) + ", " + str(point.x) + " ]")
+            print("     [ " + str(point.y) + ", " + str(point.x) + " ]\n")
+        print("Maximal-similarity alignments:\n")
+        for index, alignments in enumerate(self.alignments):
+            print("   Alignment " + str(index) + " (length " + str(len(alignments)) + "):")
+            startspace = (" " * int((5 - len(str(alignments[0].at.y)))))
+            numstring = str(alignments[0].at.y)
+            if len(numstring) > 4:
+                numstring = ".." + numstring[-3]
+            sourcestr = "     Source at" + startspace + numstring + ":  "
+
+            startspace = (" " * int((5 - len(str(alignments[0].at.x)))))
+            numstring = str(alignments[0].at.x)
+            if len(numstring) > 4:
+                numstring = ".." + numstring[-3]
+            targetstr = "     Target at" + startspace + numstring + ":  "
+
+            actionstr = "     Edit action   :  "
+            for alignment in alignments:
+                startspace = (" " * int((alignment.wordlength - len(alignment.source)) / 2))
+                endspace = (" " * int(ceil((alignment.wordlength - len(alignment.source)) / 2)))
+                sourcestr += "  " + startspace + alignment.source + endspace
+
+                startspace = (" " * int((alignment.wordlength - len(alignment.target)) / 2))
+                endspace = (" " * int(ceil((alignment.wordlength - len(alignment.target)) / 2)))
+                targetstr += "  " + startspace + alignment.target + endspace
+
+                startspace = (" " * int((alignment.wordlength - len(alignment.action)) / 2))
+                endspace = (" " * int(ceil((alignment.wordlength - len(alignment.action)) / 2)))
+                actionstr += "  " + startspace + alignment.action + endspace
+            print(sourcestr)
+            print(targetstr)
+            print(actionstr)
+
+
 
 class Point:
     def __init__(self, x: int, y: int):
         self.x = x
         self. y = y
 
+
 class Alignments:
-    def __init__(self, source, target, action, wordlength):
+    def __init__(self, source: str, target: str, action: str, wordlength: int, at: Point):
         self.source = source
         self.target = target
         self.action = action
         self.wordlength = wordlength
+        self.at = at
+
 
 if __name__ == "__main__":
     tokenized = TokenizeFiles(sys.argv[1], sys.argv[2])
