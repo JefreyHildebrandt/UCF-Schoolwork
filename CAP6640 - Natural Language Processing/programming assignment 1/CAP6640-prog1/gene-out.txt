@@ -80,18 +80,18 @@ Maximal-similarity alignments:
 
    Alignment 1 (length 9):
       Source at    5:  c c - c t g c g g
-      Target at    2:  c c g c - g - g g
+      Target at    2:  c c a c - g - g g
       Edit action   :      i   d   d    
 
 
    Alignment 2 (length 12):
       Source at    5:  c c - c t g c g g t t a
-      Target at    2:  c c g c - g - g g - - a
+      Target at    2:  c c a c - g - g g - - a
       Edit action   :      i   d   d     d d  
 
 
    Alignment 3 (length 12):
       Source at    5:  c c - c t g c g g t t a
-      Target at    2:  c c g c - g - g g a - a
+      Target at    2:  c c a c - g - g g a - a
       Edit action   :      i   d   d     s d  
 
