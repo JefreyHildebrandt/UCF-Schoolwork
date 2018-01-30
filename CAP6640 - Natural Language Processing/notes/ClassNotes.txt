@@ -20,3 +20,8 @@ Sentiment Analysis
 
 - There is a cornell database that gives you positive/negative imdb reviews and classifies them p13 of sentiment slides L6
 - There are lexicons available too from Harvard and Bing Liu p28 and p29 of positive and negative words
+
+Part-of-Speech	Tagging	and	the	Viterbi	Algorithm
+
+- 
+
