@@ -25,3 +25,14 @@ Part-of-Speech	Tagging	and	the	Viterbi	Algorithm
 
 - 
 
+Maximum Entropy Classifiers
+
+- 
+
+Information	Extraction and Named Entity Recognition
+
+-
+
+Relation Extraction
+
+- Wordnet api for relating words.  This is basically a dictionary
