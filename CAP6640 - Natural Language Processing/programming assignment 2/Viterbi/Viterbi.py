@@ -108,6 +108,7 @@ class HiddenMarkovModel:
                 print(printline)
 
         print("\nTransition Probabilities:\n")
+        bigramcount = 0
         for k, v in self.tagmapcount.items():
             totalpercentage = 0
             probline = ""
@@ -116,12 +117,32 @@ class HiddenMarkovModel:
                     prob = values[k] / self.tagmapcount[k]
                     totalpercentage += prob
                     probline += "[" + key + "|" + k + "] " + str("{:f}".format(round(prob, 6))) + "  "
+                    bigramcount += 1
             probline = "[ " + "{:f}".format(round(totalpercentage, 6)) + " ]   " + probline
             print(probline)
 
+        print("\nCorpus Features:\n")
+        totalnum = "Total # "
+        print(totalnum + "tags        : " + str(len(self.tagmap)))
+        print(totalnum + "bigrams     : " + str(bigramcount))
+        print(totalnum + "lexicals    : " + str(len(self.emissioncount)))
+        print(totalnum + "sentences   : " + str(self.tagmapcount[self.initialuuid]))
+
 class Viterbi:
     def __init__(self, hmm, testdocloc):
-        pass
+        self.sentences = self.parseviterbi(testdocloc)
+        print()
+
+    def parseviterbi(self, testdocloc):
+        f = open(testdocloc, "r")
+        sentences = []
+        for line in f:
+            sentence = line.split(" ")
+            sentencedict = OrderedDict()
+            for word in sentence:
+                sentencedict[word.rstrip().lower()] = OrderedDict()
+            sentences.append(sentencedict)
+        return sentences
 
 if __name__== "__main__":
     print("University of Central Florida")
