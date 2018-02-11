@@ -5,18 +5,22 @@ import uuid
 class HiddenMarkovModel:
     def __init__(self, corpusloc):
         self.initialuuid = " "
-        self.trainmap = OrderedDict()
-        self.trainmapcount = OrderedDict()
+        self.tagmap = OrderedDict()
+        self.tagmapcount = OrderedDict()
         self.tagtransition = OrderedDict()
+        self.emissioncount = OrderedDict()
+        # self.emissionprob = OrderedDict()
         self.totalcount = 0
         self.readfile(corpusloc)
         self.printalltagsandorder()
 
     def readfile(self, corpusloc):
         f = open(corpusloc, "r")
-        trainmap = dict()
-        trainmapcount = dict()
+        tagmap = dict()
+        tagmapcount = dict()
         tagtransition = dict()
+        emissioncount = dict()
+
         previous = self.initialuuid
         for line in f:
             ## skips blank lines
@@ -39,17 +43,24 @@ class HiddenMarkovModel:
                 elif word.endswith("ies"):
                     word = word[:-3] + "y"
 
-                if not tag in trainmap:
-                    trainmap[tag] = dict()
-                if not word in trainmap[tag]:
-                    trainmap[tag][word] = 1
+                if not word in emissioncount:
+                    emissioncount[word] = dict()
+                if not tag in emissioncount[word]:
+                    emissioncount[word][tag] = 1
                 else:
-                    trainmap[tag][word] += 1
+                    emissioncount[word][tag] += 1
 
-            if not tag in trainmapcount:
-                trainmapcount[tag] = 1
+                if not tag in tagmap:
+                    tagmap[tag] = dict()
+                if not word in tagmap[tag]:
+                    tagmap[tag][word] = 1
+                else:
+                    tagmap[tag][word] += 1
+
+            if not tag in tagmapcount:
+                tagmapcount[tag] = 1
             else:
-                trainmapcount[tag] += 1
+                tagmapcount[tag] += 1
             self.totalcount += 1
 
             if not tag in tagtransition:
@@ -61,23 +72,52 @@ class HiddenMarkovModel:
 
             previous = tag
 
-        self.trainmap = OrderedDict(sorted(trainmap.items()))
-        self.trainmapcount = OrderedDict(sorted(trainmapcount.items()))
+        self.tagmap = OrderedDict(sorted(tagmap.items()))
+        self.tagmapcount = OrderedDict(sorted(tagmapcount.items()))
         self.tagtransition = OrderedDict(sorted(tagtransition.items()))
+        self.emissioncount = OrderedDict(sorted(emissioncount.items()))
 
     def printalltagsandorder(self):
         print("All Tags Observed:\n")
         i = 0
-        for key, values in self.trainmap.items():
+        for key, values in self.tagmap.items():
             i += 1
-            self.trainmap[key] = OrderedDict(sorted(self.trainmap[key].items()))
+            self.tagmap[key] = OrderedDict(sorted(self.tagmap[key].items()))
             print(" " + str(i) + "  " + key)
-            # print(self.trainmap[key].items())
+
         print("\nInitialDistribution:\n")
-        for key, values in self.trainmapcount.items():
-            # print(key)
-            # print(values)
-            print("start [ " + key +" |  ] " + str(values / self.totalcount))
+        for key, values in self.tagtransition.items():
+            self.tagtransition[key] = OrderedDict(sorted(self.tagtransition[key].items()))
+            if self.initialuuid in values and self.initialuuid in self.tagmapcount:
+                print("start [ " + key + " |  ] " + str("{:f}".format(round(values[self.initialuuid] / self.tagmapcount[self.initialuuid], 6))))
+
+        print("\nEmission Probabilites:\n")
+        # emissionprob = dict()
+        wordspaces = "                "
+        tagspaces = "     "
+        for key, values in self.emissioncount.items():
+            wordline = ""
+            if len(key) <= len(wordspaces):
+                wordline += wordspaces[:-len(key)]
+            wordline += key
+            for k, v in values.items():
+                tagline = ""
+                if len(k) <= len(tagspaces):
+                    tagline += tagspaces[:-len(k)]
+                printline = wordline + tagline + str(k) + " " + str("{:f}".format(round(v / self.tagmapcount[k], 6)))
+                print(printline)
+
+        print("\nTransition Probabilities:\n")
+        for k, v in self.tagmapcount.items():
+            totalpercentage = 0
+            probline = ""
+            for key, values in self.tagtransition.items():
+                if k in values and k in self.tagmapcount:
+                    prob = values[k] / self.tagmapcount[k]
+                    totalpercentage += prob
+                    probline += "[" + key + "|" + k + "] " + str("{:f}".format(round(prob, 6))) + "  "
+            probline = "[ " + "{:f}".format(round(totalpercentage, 6)) + " ]   " + probline
+            print(probline)
 
 class Viterbi:
     def __init__(self, hmm, testdocloc):
