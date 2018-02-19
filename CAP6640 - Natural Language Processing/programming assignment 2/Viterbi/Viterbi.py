@@ -12,7 +12,6 @@ class HiddenMarkovModel:
         self.tagmapcount = OrderedDict()
         self.tagtransition = OrderedDict()
         self.emissioncount = OrderedDict()
-        # self.emissionprob = OrderedDict()
         self.totalcount = 0
         self.readfile(corpusloc)
         self.printalltagsandorder()
