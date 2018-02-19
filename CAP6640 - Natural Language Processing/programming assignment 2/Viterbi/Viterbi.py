@@ -216,8 +216,8 @@ class Viterbi:
             for k, v in values.items():
                 printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(v, 6))) + ")"
             print(printsent)
-        print("\n\nIntermediate Results of Viterbi Algorithm:\n")
 
+        print("\n\nIntermediate Results of Viterbi Algorithm:\n")
         i = 1
         itspace = "   "
         initspace = "             "
@@ -229,6 +229,18 @@ class Viterbi:
                 printsent += key + " :"
             for k, v in values.items():
                 printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(prevtagvals[i][k], 6))) + ", " + tagused[i][k] + ")"
+            print(printsent)
+            i += 1
+
+        print("\n\nViterbi Tagger Output:\n")
+        i = 1
+        initspace = "             "
+        for key, values in ordereddict.items():
+            if(len(key) <= len(initspace)):
+                printsent = initspace[:-len(key)] + key + "     "
+            else:
+                printsent = key + "     "
+            printsent += max(prevtagvals[i], key=prevtagvals[i].get)
             print(printsent)
             i += 1
 
