@@ -138,7 +138,7 @@ class Viterbi:
     def __init__(self, hmm: HiddenMarkovModel, testdocloc: str):
         self.hmm = hmm
         self.sentences = self.parseviterbi(testdocloc)
-        self.printsentences()
+        # self.printsentences()
         self.viterbialg()
 
     def parseviterbi(self, testdocloc):
@@ -163,29 +163,22 @@ class Viterbi:
 
     def viterbialg(self):
         for sent in self.sentences:
-            first = True
             prevtagvals = []
             prevtagvals.append(dict())
             i = 0
             prevtagvals[i][HiddenMarkovModel.initialuuid] = 1
 
             for key, values in sent.items():
-                numvals = len(values)
                 calcvals = []
                 for k, v in values.items():
                     oneval = []
                     oneval.append(0)
-                    for maxkey in sorted(prevtagvals[i], key=prevtagvals[i].get, reverse=True):
-                        # maxkey = max(prevtagvals[i], key=prevtagvals[i].get)
+                    for maxkey in prevtagvals[i]:
                         if k in self.hmm.tagtransition and maxkey in self.hmm.tagtransition[k]:
-                            oneval.append(self.hmm.tagtransition[k][maxkey] / self.hmm.tagmapcount[maxkey])
-                            # break
-                    #     else:
-                    #         print()
-                    # if oneval == None:
-                    #     oneval = 0
-                    print(k + " " + str(v * max(oneval)))
+                            oneval.append((self.hmm.tagtransition[k][maxkey] / self.hmm.tagmapcount[maxkey]) * prevtagvals[i][maxkey])
+
                     calcvals.append(v * max(oneval))
+
                 normvals = []
                 for nums in calcvals:
                     normvals.append(nums/sum(calcvals))
@@ -195,23 +188,37 @@ class Viterbi:
                     prevtagvals.append(dict())
                     prevtagvals[i][k] = normvals[index]
                     index += 1
-            print()
-            first = False
+            self.printsentences(sent, prevtagvals)
 
-    def printsentences(self):
+
+    def printsentences(self, ordereddict, prevtagvals):
         print("\nTest Set Tokens Found in Corpus:\n")
         initspace = "                "
         tagspace = "     "
-        for ordereddict in self.sentences:
-            for key, values in ordereddict.items():
-                if(len(key) <= len(initspace)):
-                    printsent = initspace[:-len(key)] + key + " :"
-                else:
-                    printsent = key + " :"
-                for k, v in values.items():
-                    printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(v, 6))) + ")"
-                print(printsent)
-            print()
+        # for ordereddict in self.sentences:
+        for key, values in ordereddict.items():
+            if(len(key) <= len(initspace)):
+                printsent = initspace[:-len(key)] + key + " :"
+            else:
+                printsent = key + " :"
+            for k, v in values.items():
+                printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(v, 6))) + ")"
+            print(printsent)
+        print("\n\nIntermediate Results of Viterbi Algorithm:\n")
+
+        i = 1
+        itspace = "   "
+        initspace = "             "
+        for key, values in ordereddict.items():
+            printsent = "Iteration" + itspace[:-len(str(i))] + str(i) + " :"
+            if(len(key) <= len(initspace)):
+                printsent += initspace[:-len(key)] + key + " :"
+            else:
+                printsent += key + " :"
+            for k, v in values.items():
+                printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(prevtagvals[i][k], 6))) + ")"
+            print(printsent)
+            i += 1
 
 if __name__== "__main__":
     print("University of Central Florida")
