@@ -1,6 +1,9 @@
+# Jeff Hildebrandt
+# Program 2 Viterbi Algorithm HMM Tagger
+# CAP6640 Natural Language Processing
+
 import sys
 from collections import OrderedDict
-import uuid
 
 class HiddenMarkovModel:
     initialuuid = " "
@@ -24,7 +27,6 @@ class HiddenMarkovModel:
 
         previous = HiddenMarkovModel.initialuuid
         for line in f:
-            ## skips blank lines
             splitline = line.split(" ")
             if len(splitline) != 2:
                 word = None
@@ -98,7 +100,6 @@ class HiddenMarkovModel:
                 print("start [ " + key + " |  ] " + str("{:f}".format(round(values[HiddenMarkovModel.initialuuid] / self.tagmapcount[HiddenMarkovModel.initialuuid], 6))))
 
         print("\nEmission Probabilites:\n")
-        # emissionprob = dict()
         wordspaces = "                "
         tagspaces = "     "
         for key, values in self.emissioncount.items():
@@ -138,7 +139,6 @@ class Viterbi:
     def __init__(self, hmm: HiddenMarkovModel, testdocloc: str):
         self.hmm = hmm
         self.sentences = self.parseviterbi(testdocloc)
-        # self.printsentences()
         self.viterbialg()
 
     def parseviterbi(self, testdocloc):
