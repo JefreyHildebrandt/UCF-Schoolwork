@@ -3,8 +3,8 @@ from collections import OrderedDict
 import uuid
 
 class HiddenMarkovModel:
+    initialuuid = " "
     def __init__(self, corpusloc):
-        self.initialuuid = " "
         self.tagmap = OrderedDict()
         self.tagmapcount = OrderedDict()
         self.tagtransition = OrderedDict()
@@ -14,6 +14,7 @@ class HiddenMarkovModel:
         self.readfile(corpusloc)
         self.printalltagsandorder()
 
+
     def readfile(self, corpusloc):
         f = open(corpusloc, "r")
         tagmap = dict()
@@ -21,27 +22,19 @@ class HiddenMarkovModel:
         tagtransition = dict()
         emissioncount = dict()
 
-        previous = self.initialuuid
+        previous = HiddenMarkovModel.initialuuid
         for line in f:
             ## skips blank lines
             splitline = line.split(" ")
             if len(splitline) != 2:
                 word = None
-                tag = self.initialuuid
+                tag = HiddenMarkovModel.initialuuid
             else:
                 word = splitline[0].rstrip()
                 tag = splitline[1].rstrip()
 
             if word != None:
-                word = word.lower()
-                if word.endswith("sses") or word.endswith("xes") or word.endswith("ches") or word.endswith("shes"):
-                    word = word[:-2]
-                elif word.endswith("ses") or word.endswith("zes"):
-                    word = word[:-1]
-                elif word.endswith("men"):
-                    word = word[:-2] + "an"
-                elif word.endswith("ies"):
-                    word = word[:-3] + "y"
+                word = HiddenMarkovModel.convertword(word)
 
                 if not word in emissioncount:
                     emissioncount[word] = dict()
@@ -77,6 +70,19 @@ class HiddenMarkovModel:
         self.tagtransition = OrderedDict(sorted(tagtransition.items()))
         self.emissioncount = OrderedDict(sorted(emissioncount.items()))
 
+    @staticmethod
+    def convertword(word):
+        word = word.rstrip().lower()
+        if word.endswith("sses") or word.endswith("xes") or word.endswith("ches") or word.endswith("shes"):
+            word = word[:-2]
+        elif word.endswith("ses") or word.endswith("zes"):
+            word = word[:-1]
+        elif word.endswith("men"):
+            word = word[:-2] + "an"
+        elif word.endswith("ies"):
+            word = word[:-3] + "y"
+        return word
+
     def printalltagsandorder(self):
         print("All Tags Observed:\n")
         i = 0
@@ -88,8 +94,8 @@ class HiddenMarkovModel:
         print("\nInitialDistribution:\n")
         for key, values in self.tagtransition.items():
             self.tagtransition[key] = OrderedDict(sorted(self.tagtransition[key].items()))
-            if self.initialuuid in values and self.initialuuid in self.tagmapcount:
-                print("start [ " + key + " |  ] " + str("{:f}".format(round(values[self.initialuuid] / self.tagmapcount[self.initialuuid], 6))))
+            if HiddenMarkovModel.initialuuid in values and HiddenMarkovModel.initialuuid in self.tagmapcount:
+                print("start [ " + key + " |  ] " + str("{:f}".format(round(values[HiddenMarkovModel.initialuuid] / self.tagmapcount[HiddenMarkovModel.initialuuid], 6))))
 
         print("\nEmission Probabilites:\n")
         # emissionprob = dict()
@@ -126,12 +132,14 @@ class HiddenMarkovModel:
         print(totalnum + "tags        : " + str(len(self.tagmap)))
         print(totalnum + "bigrams     : " + str(bigramcount))
         print(totalnum + "lexicals    : " + str(len(self.emissioncount)))
-        print(totalnum + "sentences   : " + str(self.tagmapcount[self.initialuuid]))
+        print(totalnum + "sentences   : " + str(self.tagmapcount[HiddenMarkovModel.initialuuid]))
 
 class Viterbi:
-    def __init__(self, hmm, testdocloc):
+    def __init__(self, hmm: HiddenMarkovModel, testdocloc: str):
+        self.hmm = hmm
         self.sentences = self.parseviterbi(testdocloc)
-        print()
+        self.printsentences()
+        self.viterbialg()
 
     def parseviterbi(self, testdocloc):
         f = open(testdocloc, "r")
@@ -140,9 +148,70 @@ class Viterbi:
             sentence = line.split(" ")
             sentencedict = OrderedDict()
             for word in sentence:
-                sentencedict[word.rstrip().lower()] = OrderedDict()
+                word = word.rstrip()
+                convword = HiddenMarkovModel.convertword(word)
+                sentencedict[word] = dict()
+                if convword in self.hmm.emissioncount:
+                    values = self.hmm.emissioncount[convword]
+                    for k, v in values.items():
+                        sentencedict[word][k] = v / self.hmm.tagmapcount[k]
+                else:
+                    sentencedict[word]["NN"] = 1
+                sentencedict[word] = OrderedDict(sorted(sentencedict[word].items()))
             sentences.append(sentencedict)
         return sentences
+
+    def viterbialg(self):
+        for sent in self.sentences:
+            first = True
+            prevtagvals = []
+            prevtagvals.append(dict())
+            i = 0
+            prevtagvals[i][HiddenMarkovModel.initialuuid] = 1
+
+            for key, values in sent.items():
+                numvals = len(values)
+                calcvals = []
+                for k, v in values.items():
+                    oneval = []
+                    oneval.append(0)
+                    for maxkey in sorted(prevtagvals[i], key=prevtagvals[i].get, reverse=True):
+                        # maxkey = max(prevtagvals[i], key=prevtagvals[i].get)
+                        if k in self.hmm.tagtransition and maxkey in self.hmm.tagtransition[k]:
+                            oneval.append(self.hmm.tagtransition[k][maxkey] / self.hmm.tagmapcount[maxkey])
+                            # break
+                    #     else:
+                    #         print()
+                    # if oneval == None:
+                    #     oneval = 0
+                    print(k + " " + str(v * max(oneval)))
+                    calcvals.append(v * max(oneval))
+                normvals = []
+                for nums in calcvals:
+                    normvals.append(nums/sum(calcvals))
+                i += 1
+                index = 0
+                for k, v in values.items():
+                    prevtagvals.append(dict())
+                    prevtagvals[i][k] = normvals[index]
+                    index += 1
+            print()
+            first = False
+
+    def printsentences(self):
+        print("\nTest Set Tokens Found in Corpus:\n")
+        initspace = "                "
+        tagspace = "     "
+        for ordereddict in self.sentences:
+            for key, values in ordereddict.items():
+                if(len(key) <= len(initspace)):
+                    printsent = initspace[:-len(key)] + key + " :"
+                else:
+                    printsent = key + " :"
+                for k, v in values.items():
+                    printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(v, 6))) + ")"
+                print(printsent)
+            print()
 
 if __name__== "__main__":
     print("University of Central Florida")
