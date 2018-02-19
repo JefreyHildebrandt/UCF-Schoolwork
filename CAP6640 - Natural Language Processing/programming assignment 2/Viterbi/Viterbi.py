@@ -167,17 +167,28 @@ class Viterbi:
             prevtagvals.append(dict())
             i = 0
             prevtagvals[i][HiddenMarkovModel.initialuuid] = 1
-
+            tagused = []
+            tagused.append(dict())
             for key, values in sent.items():
                 calcvals = []
+                tags = []
                 for k, v in values.items():
                     oneval = []
                     oneval.append(0)
+                    lrgest = 0
+                    lrgesttag = ""
                     for maxkey in prevtagvals[i]:
                         if k in self.hmm.tagtransition and maxkey in self.hmm.tagtransition[k]:
-                            oneval.append((self.hmm.tagtransition[k][maxkey] / self.hmm.tagmapcount[maxkey]) * prevtagvals[i][maxkey])
+                            lrg = (self.hmm.tagtransition[k][maxkey] / self.hmm.tagmapcount[maxkey]) * prevtagvals[i][maxkey]
+                            if lrg >= lrgest:
+                                lrgest = lrg
+                                if maxkey == HiddenMarkovModel.initialuuid:
+                                    lrgesttag = "null"
+                                else:
+                                    lrgesttag = maxkey
 
-                    calcvals.append(v * max(oneval))
+                    tags.append(lrgesttag)
+                    calcvals.append(v * lrgest)
 
                 normvals = []
                 for nums in calcvals:
@@ -187,15 +198,16 @@ class Viterbi:
                 for k, v in values.items():
                     prevtagvals.append(dict())
                     prevtagvals[i][k] = normvals[index]
+                    tagused.append(dict())
+                    tagused[i][k] = tags[index]
                     index += 1
-            self.printsentences(sent, prevtagvals)
+            self.printsentences(sent, prevtagvals, tagused)
 
 
-    def printsentences(self, ordereddict, prevtagvals):
+    def printsentences(self, ordereddict, prevtagvals, tagused):
         print("\nTest Set Tokens Found in Corpus:\n")
         initspace = "                "
         tagspace = "     "
-        # for ordereddict in self.sentences:
         for key, values in ordereddict.items():
             if(len(key) <= len(initspace)):
                 printsent = initspace[:-len(key)] + key + " :"
@@ -216,7 +228,7 @@ class Viterbi:
             else:
                 printsent += key + " :"
             for k, v in values.items():
-                printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(prevtagvals[i][k], 6))) + ")"
+                printsent += tagspace[:-len(k)] + k + " (" + str("{:f}".format(round(prevtagvals[i][k], 6))) + ", " + tagused[i][k] + ")"
             print(printsent)
             i += 1
 
