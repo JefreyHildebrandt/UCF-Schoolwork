@@ -1,3 +1,10 @@
+# Jeff Hildebrandt
+# Program 3 Transition-Based Dependency Parsing
+# CAP6640 Natural Language Processing
+
+# This program can be run by using python 3 and passing the cmd argument [sentence input]
+# The corpus is hard coded to be named 'wsj-dep.txt' and must be in the same directory as this file
+
 import os, sys, collections
 
 class TransitionBasedDependencyParsing:
@@ -80,7 +87,80 @@ class TransitionBasedDependencyParsing:
             print()
 
     def parsesentence(self, inputtext):
-        pass
+        buffer = collections.deque()
+        stack = collections.deque()
+        print('Input Sentence:')
+        for line in inputtext:
+            line = line.rstrip()
+            token, pos = line.split('/')
+            buffer.append(TokenPos(token, pos))
+            print(line, end=' ')
+        print('\n\nParsing Actions and Transitions:\n')
+
+        while(len(stack) > 0 or len(buffer) > 0):
+            self.printqueue(stack)
+            print(' ', end='')
+            self.printqueue(buffer)
+
+            if len(stack) < 2 and len(buffer) >= 1:
+                stack.append(buffer.popleft())
+                print(' SHIFT', end='')
+            elif len(stack) <= 1 and len(buffer) < 1:
+                root = stack.pop()
+                print(' Root --> ' + root.str())
+            else:
+                second = stack.pop()
+                first = stack.pop()
+
+                if first.pos[0] == 'V' and (second.pos[0] == '.' or second.pos[0] == 'R'):
+                    print(' Right-Arc: ' + first.str() + ' --> ' + second.str(), end='')
+                    stack.append(first)
+                elif len(stack) > 0 and first.pos[0] == 'I' and second.pos[0] == '.':
+                    print(' SWAP', end='')
+                    stack.append(second)
+                    buffer.appendleft(first)
+                elif len(buffer) > 0 and ((first.pos[0] == 'V' or first.pos[0] == 'I') and
+                                          (second.pos[0] == 'D' or second.pos[0] == 'I' or
+                                           second.pos[0] == "J" or second.pos[0] == 'P' or
+                                           second.pos[0] == 'R')):
+                    stack.append(first)
+                    stack.append(second)
+                    stack.append(buffer.popleft())
+                    print(' SHIFT', end='')
+                else:
+                    left = -1
+                    right = -1
+                    if first.pos in self.leftarc and second.pos in self.leftarc[first.pos]:
+                        left = self.leftarc[first.pos][second.pos]
+                    if first.pos in self.rightarc and second.pos in self.rightarc[first.pos]:
+                        right = self.rightarc[first.pos][second.pos]
+
+                    if left > right:
+                        print(' Left-Arc: ' + first.str() + ' <-- ' + second.str(), end='')
+                        stack.append(second)
+                    elif right > left:
+                        print(' Right-Arc: ' + first.str() + ' --> ' + second.str(), end='')
+                        stack.append(first)
+                    elif left != -1 and right != -1:
+                        print(' Left-Arc: ' + first.str() + ' <-- ' + second.str(), end='')
+                        stack.append(second)
+                    else:
+                        stack.append(first)
+                        stack.append(second)
+                        stack.append(buffer.popleft())
+                        print(' SHIFT', end='')
+            print()
+
+    def printqueue(self, queue):
+        print('[', end='')
+        first = True
+        for i, node in enumerate(queue):
+            if first:
+                first = False
+            else:
+                print(',', end='')
+            print(' ' + node.str(), end='')
+        print(']', end='')
 
     def assignlinks(self, sentarray):
         if len(sentarray) < 1:
@@ -111,6 +191,14 @@ class PosLink:
         self.sentnum = sentnum
         self.pos = pos
         self.link = link
+
+class TokenPos:
+    def __init__(self, token, pos):
+        self.token = token
+        self.pos = pos
+
+    def str(self):
+        return self.token + '/' + self.pos
 
 if __name__== "__main__":
     print("University of Central Florida")
