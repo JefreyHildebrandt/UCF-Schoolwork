@@ -45,3 +45,11 @@ Syntactic Parsing
 
 - Use Penn Treebank for this
 - Lets you determine what words relate to eachother
+
+Statistical Parsing
+
+- p37 mentions RNN 
+
+Advanced Dialog Systems
+
+- 

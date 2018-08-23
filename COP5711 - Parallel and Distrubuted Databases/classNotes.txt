@@ -1,0 +1,5 @@
+Parallel and Distrubuted Databases Notes
+Class 1:
+http://www.cs.ucf.edu/~kienhua/classes/
+kienhua@cs.ucf.edu
+critical reviews - read 4-5 research papers and write a 2 page report on each
