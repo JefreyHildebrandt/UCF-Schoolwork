@@ -2,6 +2,8 @@
 # Program 2 Viterbi Algorithm HMM Tagger
 # CAP6640 Natural Language Processing
 
+# This program can be run by using python 3 and passing the cmd arguments [pos training location] and [input sentences]
+# The program can accept multiple sentences in the input sentences file to be read in
 import sys
 from collections import OrderedDict
 
