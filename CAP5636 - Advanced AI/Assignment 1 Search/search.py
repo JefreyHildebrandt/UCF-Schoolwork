@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from game import Directions, Configuration
 
 class SearchProblem:
     """
@@ -67,13 +68,34 @@ def tinyMazeSearch(problem):
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
-    from game import Directions
+    # from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+class State:
+    def __init__(self, coord, direction, cost):
+        self.coord = coord
+        self.direction = direction
+        self.cost = cost
+
+    def get_tuple(self):
+        return [self.coord, self.direction, self.cost]
+
 def treeSearch(problem, strategy):
-    pass
+    # initializing the strategy structure with tuple of [(x, y), Direction, Cost]
+
+    strategy.push((problem.getStartState, Directions.STOP, 0))
+
+    visitedNodes = set()
+
+
+    while not strategy.isEmpty():
+        leaf_expansion = strategy.pop()
+        for successor in problem.getSuccessors(leaf_expansion):
+            print "dks"
+
+
 
 def depthFirstSearch(problem):
     """
@@ -90,6 +112,9 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     return treeSearch(problem, util.Stack())
 
 def breadthFirstSearch(problem):
