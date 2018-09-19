@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3b76cb96-d9e8-4cea-880d-89341460e65d" name="Default" comment="" />
+    <list default="true" id="10442dc7-4116-43d1-9e35-be83b07c5669" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,30 +10,36 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Viterbi$Viterbi.coverage" NAME="Viterbi Coverage Results" MODIFIED="1519009696031" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Transition_Based_Dependency_parsing$TransitionBasedDependencyParsing.coverage" NAME="TransitionBasedDependencyParsing Coverage Results" MODIFIED="1521415144232" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Viterbi.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Viterbi.py">
+      <file leaf-file-name="TransitionBasedDependencyParsing.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/TransitionBasedDependencyParsing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="5" column="85" lean-forward="false" selection-start-line="5" selection-start-column="85" selection-end-line="5" selection-end-column="85" />
-              <folding>
-                <element signature="e#305#315#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="679">
+              <caret line="206" column="0" lean-forward="false" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TextSimilarityAnalysis.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../programming assignment 1/TextSimilarityAnalysis/TextSimilarityAnalysis.py">
+      <file leaf-file-name="_pydev_execfile.py" pinned="false" current-in-tab="false">
+        <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="37" />
-              <folding>
-                <element signature="e#95#105#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="289">
+              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Viterbi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../programming assignment 2/Viterbi/Viterbi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="7" column="35" lean-forward="false" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -49,25 +55,17 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>lower</find>
-      <find>print</find>
-      <find>trainmap</find>
-      <find>emissionprob</find>
-      <find>1-2-3</find>
-      <find>time</find>
-      <find>initialuuid</find>
-      <find>.initialuuid</find>
-      <find>Transition Probabilities:</find>
+      <find>sentlinks</find>
+      <find>self.tokens</find>
+      <find>int(</find>
+      <find>SHIFT</find>
+      <find>Arc Confusion Array</find>
     </findStrings>
-    <replaceStrings>
-      <replace>tagmap</replace>
-      <replace>emissioncount</replace>
-    </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Viterbi.py" />
+        <option value="$PROJECT_DIR$/TransitionBasedDependencyParsing.py" />
       </list>
     </option>
   </component>
@@ -77,11 +75,11 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="104" />
-    <option name="y" value="125" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="58" />
+    <option name="y" value="-15" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -98,25 +96,29 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Viterbi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Viterbi" type="462c0819:PsiDirectoryNode" />
+              <item name="Transition-Based_Dependency_parsing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Transition-Based_Dependency_parsing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Transition-Based_Dependency_parsing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Transition-Based_Dependency_parsing" type="462c0819:PsiDirectoryNode" />
+              <item name="venv" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="C:/GroupProjects/CAP6640_NLP-Project" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -131,47 +133,28 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="Viterbi" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="TransitionBasedDependencyParsing" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\Viterbi\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Viterbi" />
+      <module name="Transition-Based_Dependency_parsing" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Viterbi.py" />
-      <option name="PARAMETERS" value="&quot;C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\pos.train.txt&quot; &quot;C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\sample_3.txt&quot;" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\Viterbi\venv\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Viterbi" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="&quot;C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\pos.train.txt&quot; &quot;C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 2\sample_3.txt&quot;" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/TransitionBasedDependencyParsing.py" />
+      <option name="PARAMETERS" value="&quot;C:\UCF-Schoolwork\CAP6640 - Natural Language Processing\programming assignment 3\CAP6640-prog3-distro\hearing.txt&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <recent_temporary>
       <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Python.Viterbi" />
+        <item index="0" class="java.lang.String" itemvalue="Python.TransitionBasedDependencyParsing" />
       </list>
     </recent_temporary>
   </component>
@@ -183,23 +166,23 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="3b76cb96-d9e8-4cea-880d-89341460e65d" name="Default" comment="" />
-      <created>1518284037046</created>
+      <changelist id="10442dc7-4116-43d1-9e35-be83b07c5669" name="Default" comment="" />
+      <created>1521305544224</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1518284037046</updated>
+      <updated>1521305544224</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="104" y="125" width="1400" height="1000" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32953367" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32953367" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -224,96 +207,80 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <default-breakpoints>
-        <breakpoint type="python-exception">
-          <properties notifyOnTerminate="true" exception="BaseException">
-            <option name="notifyOnTerminate" value="true" />
-          </properties>
-        </breakpoint>
-      </default-breakpoints>
-      <option name="time" value="37" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Viterbi.py">
+    <entry file="file://$PROJECT_DIR$/TransitionBasedDependencyParsing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#305#315#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../programming assignment 1/TextSimilarityAnalysis/TextSimilarityAnalysis.py">
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="37" />
-          <folding>
-            <element signature="e#95#105#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="289">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Viterbi.py">
+    <entry file="file://$PROJECT_DIR$/../../programming assignment 2/Viterbi/Viterbi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#305#315#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="102">
+          <caret line="7" column="35" lean-forward="true" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../programming assignment 1/TextSimilarityAnalysis/TextSimilarityAnalysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1343">
-          <caret line="81" column="13" lean-forward="false" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="13" />
-          <folding>
-            <element signature="e#95#105#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../gold.out">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315673">
-          <caret line="18569" column="16" lean-forward="false" selection-start-line="18569" selection-start-column="10" selection-end-line="18569" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../sample_3.txt">
+    <entry file="file://$PROJECT_DIR$/TransitionBasedDependencyParsing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../pos.train.txt">
+    <entry file="file://$PROJECT_DIR$/../../programming assignment 2/Viterbi/Viterbi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="9" lean-forward="false" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+        <state relative-caret-position="357">
+          <caret line="22" column="9" lean-forward="false" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../programming assignment 1/TextSimilarityAnalysis/TextSimilarityAnalysis.py">
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="37" />
-          <folding>
-            <element signature="e#95#105#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="289">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Viterbi.py">
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="5" column="85" lean-forward="false" selection-start-line="5" selection-start-column="85" selection-end-line="5" selection-end-column="85" />
-          <folding>
-            <element signature="e#305#315#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="289">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../programming assignment 2/Viterbi/Viterbi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="35" lean-forward="false" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TransitionBasedDependencyParsing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="679">
+          <caret line="206" column="0" lean-forward="false" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

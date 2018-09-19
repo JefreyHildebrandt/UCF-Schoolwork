@@ -2,7 +2,7 @@
 # Program 3 Transition-Based Dependency Parsing
 # CAP6640 Natural Language Processing
 
-# This program can be run by using python 3 and passing the cmd argument [sentence input]
+# This program can be run by using python 3 and passing the cmd argument [sentence input location]
 # The corpus is hard coded to be named 'wsj-dep.txt' and must be in the same directory as this file
 
 import os, sys, collections
@@ -81,7 +81,7 @@ class TransitionBasedDependencyParsing:
                 if pos in self.leftarc and pos2 in self.leftarc[pos] and pos in self.rightarc and pos2 in self.rightarc[pos]:
                     print('[' + endspaces[:len(endspaces) - len(pos2)] + pos2 + ',' +
                           endspaces[:len(endspaces) - len(str(self.leftarc[pos][pos2]))] +
-                          str(self.leftarc[pos][pos2]) +
+                          str(self.leftarc[pos][pos2]) + ',' +
                           endspaces[:len(endspaces) - len(str(self.rightarc[pos][pos2]))] +
                           str(self.rightarc[pos][pos2]) + ']', end=' ')
             print()
