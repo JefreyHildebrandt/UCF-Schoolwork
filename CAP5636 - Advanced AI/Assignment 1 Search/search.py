@@ -82,18 +82,42 @@ class State:
     def get_tuple(self):
         return [self.coord, self.direction, self.cost]
 
+
+coordinate = 0
+direction = 1
+cost = 2
+
 def treeSearch(problem, strategy):
     # initializing the strategy structure with tuple of [(x, y), Direction, Cost]
+    strat = strategy()
+    paths = strategy()
+    strat.push(problem.getStartState())
+    visited = set()
+    path = []
+    while not strat.isEmpty():
+        cur_coord = strat.pop()
+        if cur_coord not in visited:
+            visited.add(cur_coord)
+            if problem.isGoalState(cur_coord):
+                return path
+            for coord, dir, cost in problem.getSuccessors(cur_coord):
+                strat.push(coord)
+                paths.push(path + [dir])
+        if paths.isEmpty():
+            return []
+        path = paths.pop()
 
-    strategy.push((problem.getStartState, Directions.STOP, 0))
-
-    visitedNodes = set()
-
-
-    while not strategy.isEmpty():
-        leaf_expansion = strategy.pop()
-        for successor in problem.getSuccessors(leaf_expansion):
-            print "dks"
+        # last_coord = leaf_expansion[-1][coordinate]
+        # if problem.isGoalState(last_coord):
+        #     path = []
+        #     for leaf in leaf_expansion:
+        #         path.append(leaf[direction])
+        #     return path
+        # for leaf in problem.getSuccessors(last_coord):
+        #     if leaf[coordinate] not in visited:
+        #         visited.add(leaf[coordinate])
+        #         strategy.push(leaf_expansion.append(leaf))
+    return []
 
 
 
@@ -115,12 +139,12 @@ def depthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    return treeSearch(problem, util.Stack())
+    return treeSearch(problem, util.Stack)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    return treeSearch(problem. util.Queue())
+    return treeSearch(problem. util.Queue)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
