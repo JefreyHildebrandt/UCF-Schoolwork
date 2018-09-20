@@ -18,7 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
-from game import Directions, Configuration
+from game import Directions
 
 class SearchProblem:
     """
@@ -89,8 +89,8 @@ cost = 2
 
 def treeSearch(problem, strategy):
     # initializing the strategy structure with tuple of [(x, y), Direction, Cost]
-    strat = strategy()
     paths = strategy()
+    strat = strategy()
     strat.push(problem.getStartState())
     visited = set()
     path = []
@@ -106,17 +106,6 @@ def treeSearch(problem, strategy):
         if paths.isEmpty():
             return []
         path = paths.pop()
-
-        # last_coord = leaf_expansion[-1][coordinate]
-        # if problem.isGoalState(last_coord):
-        #     path = []
-        #     for leaf in leaf_expansion:
-        #         path.append(leaf[direction])
-        #     return path
-        # for leaf in problem.getSuccessors(last_coord):
-        #     if leaf[coordinate] not in visited:
-        #         visited.add(leaf[coordinate])
-        #         strategy.push(leaf_expansion.append(leaf))
     return []
 
 
@@ -136,20 +125,35 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     return treeSearch(problem, util.Stack)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    return treeSearch(problem. util.Queue)
+    return treeSearch(problem, util.Queue)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    paths = util.PriorityQueue()
+    strat = util.PriorityQueue()
+    strat.push(problem.getStartState(), 0)
+    visited = set()
+    path = []
+    while not strat.isEmpty():
+        cur_coord = strat.pop()
+        if cur_coord not in visited:
+            visited.add(cur_coord)
+            if problem.isGoalState(cur_coord):
+                return path
+            for coord, dir, cost in problem.getSuccessors(cur_coord):
+                n_cost = problem.getCostOfActions(path + [dir])
+                strat.push(coord, n_cost)
+                paths.push(path + [dir], n_cost)
+        if paths.isEmpty():
+            return []
+        path = paths.pop()
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -158,10 +162,67 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
+def heuristic(a, b):
+    (x1, y1) = a
+    (x2, y2) = b
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
+# def a_star_search(graph, start, goal):
+#     frontier = PriorityQueue()
+#     frontier.put(start, 0)
+#     came_from = {}
+#     cost_so_far = {}
+#     came_from[start] = None
+#     cost_so_far[start] = 0
+#
+#     while not frontier.empty():
+#         current = frontier.get()
+#
+#         if current == goal:
+#             break
+#
+#         for next in graph.neighbors(current):
+#             new_cost = cost_so_far[current] + graph.cost(current, next)
+#             if next not in cost_so_far or new_cost < cost_so_far[next]:
+#                 cost_so_far[next] = new_cost
+#                 priority = new_cost + heuristic(goal, next)
+#                 frontier.put(next, priority)
+#                 came_from[next] = current
+#
+#     return came_from, cost_so_far
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    frontier.push((problem.getStartState(), None), 0)
+    came_from = dict()
+    cost_so_far = dict()
+    came_from[problem.getStartState()] = None
+    cost_so_far[problem.getStartState()] = 0
+
+    while not frontier.isEmpty():
+        current = frontier.pop()
+
+        if problem.isGoalState(current[coordinate]):
+            total_path = [current[direction]]
+            while current[coordinate] in came_from:
+                current = came_from[current[coordinate]]
+                if current[direction] == None:
+                    return total_path
+                total_path = [current[direction]] + total_path
+
+
+        for coord, dir, cost in problem.getSuccessors(current[coordinate]):
+            new_cost = cost_so_far[current[coordinate]] + cost
+            if coord not in cost_so_far or new_cost < cost_so_far[coord]:
+                cost_so_far[coord] = new_cost
+                priority = new_cost + heuristic(coord, problem)
+                frontier.push((coord, dir), priority)
+                came_from[coord] = current
+
+    return []
 
 
 # Abbreviations
