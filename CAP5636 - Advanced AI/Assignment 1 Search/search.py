@@ -87,22 +87,24 @@ coordinate = 0
 direction = 1
 cost = 2
 
-def treeSearch(problem, strategy):
+def treeSearch(problem, strategy, get_cur_coord = lambda state: state):
     # initializing the strategy structure with tuple of [(x, y), Direction, Cost]
     paths = strategy()
     strat = strategy()
     strat.push(problem.getStartState())
-    visited = set()
+    visited = []
     path = []
     while not strat.isEmpty():
         cur_coord = strat.pop()
         if cur_coord not in visited:
-            visited.add(cur_coord)
+            visited.append(cur_coord)
             if problem.isGoalState(cur_coord):
                 return path
-            for coord, dir, cost in problem.getSuccessors(cur_coord):
-                strat.push(coord)
-                paths.push(path + [dir])
+            for coord in problem.getSuccessors(cur_coord):
+                # if isinstance(coord[0][0], tuple):
+                #     coord = coord[0]
+                strat.push(coord[coordinate])
+                paths.push(path + [coord[direction]])
         if paths.isEmpty():
             return []
         path = paths.pop()
@@ -169,38 +171,22 @@ def heuristic(a, b):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-# def a_star_search(graph, start, goal):
-#     frontier = PriorityQueue()
-#     frontier.put(start, 0)
-#     came_from = {}
-#     cost_so_far = {}
-#     came_from[start] = None
-#     cost_so_far[start] = 0
-#
-#     while not frontier.empty():
-#         current = frontier.get()
-#
-#         if current == goal:
-#             break
-#
-#         for next in graph.neighbors(current):
-#             new_cost = cost_so_far[current] + graph.cost(current, next)
-#             if next not in cost_so_far or new_cost < cost_so_far[next]:
-#                 cost_so_far[next] = new_cost
-#                 priority = new_cost + heuristic(goal, next)
-#                 frontier.put(next, priority)
-#                 came_from[next] = current
-#
-#     return came_from, cost_so_far
+def convert_state_for_map(state):
+    if len(state) > 1 and isinstance(state[1], set):
+        return state[0]
+    return state
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
+    # python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
+    start_state = convert_state_for_map(problem.getStartState())
     frontier.push((problem.getStartState(), None), 0)
     came_from = dict()
     cost_so_far = dict()
-    came_from[problem.getStartState()] = None
-    cost_so_far[problem.getStartState()] = 0
+    came_from[start_state] = None
+    cost_so_far[start_state] = 0
 
     while not frontier.isEmpty():
         current = frontier.pop()
@@ -208,19 +194,19 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if problem.isGoalState(current[coordinate]):
             total_path = [current[direction]]
             while current[coordinate] in came_from:
-                current = came_from[current[coordinate]]
+                current = came_from[convert_state_for_map(current[coordinate])]
                 if current[direction] == None:
                     return total_path
                 total_path = [current[direction]] + total_path
 
 
         for coord, dir, cost in problem.getSuccessors(current[coordinate]):
-            new_cost = cost_so_far[current[coordinate]] + cost
-            if coord not in cost_so_far or new_cost < cost_so_far[coord]:
-                cost_so_far[coord] = new_cost
+            new_cost = cost_so_far[convert_state_for_map(current[coordinate])] + cost
+            if convert_state_for_map(coord) not in cost_so_far or new_cost < cost_so_far[convert_state_for_map(coord)]:
+                cost_so_far[convert_state_for_map(coord)] = new_cost
                 priority = new_cost + heuristic(coord, problem)
                 frontier.push((coord, dir), priority)
-                came_from[coord] = current
+                came_from[convert_state_for_map(coord)] = current
 
     return []
 

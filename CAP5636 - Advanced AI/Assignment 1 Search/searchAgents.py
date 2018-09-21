@@ -288,6 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        # self.corners_visited = set()
 
     def getStartState(self):
         """
@@ -295,14 +296,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, set())
 
     def isGoalState(self, state):
+        coord, corners_visited = state
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if coord in self.corners:
+            corners_visited.add(coord)
+        return len(corners_visited) == 4
 
     def getSuccessors(self, state):
         """
@@ -316,14 +320,22 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        x, y = state[0]
+        visited_orners = state[1]
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
 
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            corner_copy = visited_orners.copy()
+            if not hitsWall:
+                next_point = (nextx, nexty)
+                if next_point in self.corners:
+                    corner_copy.add(next_point)
+                successor = ((next_point, corner_copy), action, 1)
+                successors.append(successor)
             "*** YOUR CODE HERE ***"
 
         self._expanded += 1 # DO NOT CHANGE
@@ -345,6 +357,8 @@ class CornersProblem(search.SearchProblem):
 
 def cornersHeuristic(state, problem):
     """
+    python pacman.py -l mediumCorners -p AStarCornersAgent -z 0.5
+
     A heuristic for the CornersProblem that you defined.
 
       state:   The current search state
@@ -370,6 +384,8 @@ class AStarCornersAgent(SearchAgent):
 
 class FoodSearchProblem:
     """
+    python pacman.py -l testSearch -p AStarFoodSearchAgent
+    python pacman.py -l trickySearch -p AStarFoodSearchAgent
     A search problem associated with finding the a path that collects all of the
     food (dots) in a Pacman game.
 
@@ -426,6 +442,8 @@ class AStarFoodSearchAgent(SearchAgent):
 
 def foodHeuristic(state, problem):
     """
+    python pacman.py -l bigSearch -p ClosestDotSearchAgent -z .5
+
     Your heuristic for the FoodSearchProblem goes here.
 
     This heuristic must be consistent to ensure correctness.  First, try to come
