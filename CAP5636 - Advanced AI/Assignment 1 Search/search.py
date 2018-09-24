@@ -170,10 +170,17 @@ def heuristic(a, b):
     (x2, y2) = b
     return abs(x1 - x2) + abs(y1 - y2)
 
+def is_custom_state(state):
+    return len(state) > 1 and isinstance(state[1], set)
 
 def convert_state_for_map(state):
-    if len(state) > 1 and isinstance(state[1], set):
+    if is_custom_state(state):
         return state[0]
+    return state
+
+def add_coords_to_map(state, problem, total_path):
+    if is_custom_state(state):
+        problem.add_coords_to_map(state, problem, total_path)
     return state
 
 def aStarSearch(problem, heuristic=nullHeuristic):
@@ -188,15 +195,36 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     came_from[start_state] = None
     cost_so_far[start_state] = 0
 
+    is_custom = is_custom_state(problem.getStartState())
+    total_path = []
+
     while not frontier.isEmpty():
         current = frontier.pop()
 
-        if problem.isGoalState(current[coordinate]):
-            total_path = [current[direction]]
-            while current[coordinate] in came_from:
+        if not is_custom:
+            goal_result = problem.isGoalState(add_coords_to_map(current[coordinate], problem, total_path))
+        else:
+            goal_result = problem.isGoalState(add_coords_to_map(current[coordinate], problem, total_path), is_custom)
+
+        if goal_result == True:
+            total_path.append(current[direction])
+            while convert_state_for_map(current[coordinate]) in came_from:
                 current = came_from[convert_state_for_map(current[coordinate])]
                 if current[direction] == None:
                     return total_path
+                total_path = [current[direction]] + total_path
+        elif goal_result == 'reset' and current[coordinate] not in total_path:
+            total_path.append(current[direction])
+            while convert_state_for_map(current[coordinate]) in came_from:
+                current = came_from[convert_state_for_map(current[coordinate])]
+                if current == None:
+                    print('')
+                if current[direction] == None:
+                    came_from = dict()
+                    cost_so_far = dict()
+                    came_from[start_state] = None
+                    cost_so_far[start_state] = 0
+                    break
                 total_path = [current[direction]] + total_path
 
 

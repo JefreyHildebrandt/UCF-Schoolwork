@@ -289,6 +289,8 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         # self.corners_visited = set()
+        self.startingGameState = startingGameState
+
 
     def getStartState(self):
         """
@@ -298,7 +300,7 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         return (self.startingPosition, set())
 
-    def isGoalState(self, state):
+    def isGoalState(self, state, get_corners=False):
         coord, corners_visited = state
         """
         Returns whether this search state is a goal state of the problem.
@@ -306,6 +308,8 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         if coord in self.corners:
             corners_visited.add(coord)
+            if get_corners and len(corners_visited) < 4:
+                return 'reset'
         return len(corners_visited) == 4
 
     def getSuccessors(self, state):
@@ -354,6 +358,11 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
+    def add_coords_to_map(self, state, coord, total_path):
+        if len(state) > 1 and isinstance(state[1], set):
+            state[1].add(coord)
+        return state
+
 
 def cornersHeuristic(state, problem):
     """
@@ -372,6 +381,20 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+
+    # xy = state[0]
+    # visitedCorners = state[1]
+    # # Finding out the not visited corners
+    # unvisitedCorners = []
+    # for corner in corners:
+    #     if not (corner in visitedCorners):
+    #         unvisitedCorners.append(corner)
+    #
+    # """ Using Maze Distance to farthest corner as the heuristic. """
+    # heuristicvalue = [0]
+    # for corner in unvisitedCorners:
+    #     heuristicvalue.append(mazeDistance(xy, corner, problem.startingGameState))
+    # return max(heuristicvalue)
 
     "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
