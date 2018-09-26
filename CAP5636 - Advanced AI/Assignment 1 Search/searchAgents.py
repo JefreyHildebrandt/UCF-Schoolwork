@@ -288,7 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        # self.corners_visited = set()
+        self.global_corners = set()
         self.startingGameState = startingGameState
 
 
@@ -302,14 +302,19 @@ class CornersProblem(search.SearchProblem):
 
     def isGoalState(self, state, get_corners=False):
         coord, corners_visited = state
+        if get_corners:
+            corners_visited = self.global_corners
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
         if coord in self.corners:
-            corners_visited.add(coord)
-            if get_corners and len(corners_visited) < 4:
+            if get_corners and len(corners_visited) < 4 and coord not in corners_visited:
+                corners_visited.add(coord)
                 return 'reset'
+            corners_visited.add(coord)
+            if(len(corners_visited) == 4):
+                print('dd')
         return len(corners_visited) == 4
 
     def getSuccessors(self, state):
@@ -382,22 +387,13 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    # xy = state[0]
-    # visitedCorners = state[1]
-    # # Finding out the not visited corners
-    # unvisitedCorners = []
-    # for corner in corners:
-    #     if not (corner in visitedCorners):
-    #         unvisitedCorners.append(corner)
-    #
-    # """ Using Maze Distance to farthest corner as the heuristic. """
-    # heuristicvalue = [0]
-    # for corner in unvisitedCorners:
-    #     heuristicvalue.append(mazeDistance(xy, corner, problem.startingGameState))
-    # return max(heuristicvalue)
-
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    xy = state[0]
+    visited_corners = state[1]
+    highest_val = [0]
+    for corner in corners:
+        if corner not in visited_corners:
+            highest_val.append(mazeDistance(xy, corner, problem.startingGameState))
+    return max(highest_val)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -494,8 +490,17 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
+    # if isinstance(state, tuple):
+    #     position = state
+    #     foodGrid = problem.food
     "*** YOUR CODE HERE ***"
-    return 0
+    largest = 0
+    for x in range(foodGrid.width):
+        for y in range(foodGrid.height):
+            if foodGrid[x][y]:
+                n_size = mazeDistance(position, (x, y), problem.startingGameState)
+                largest = n_size if n_size > largest else largest
+    return largest
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -526,7 +531,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.astar(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -562,7 +567,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
 
 def mazeDistance(point1, point2, gameState):
     """

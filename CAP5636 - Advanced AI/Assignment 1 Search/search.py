@@ -170,74 +170,44 @@ def heuristic(a, b):
     (x2, y2) = b
     return abs(x1 - x2) + abs(y1 - y2)
 
-def is_custom_state(state):
-    return len(state) > 1 and isinstance(state[1], set)
-
-def convert_state_for_map(state):
-    if is_custom_state(state):
-        return state[0]
-    return state
-
-def add_coords_to_map(state, problem, total_path):
-    if is_custom_state(state):
-        problem.add_coords_to_map(state, problem, total_path)
-    return state
+# def is_custom_state(state):
+#     return len(state) > 1 and isinstance(state[1], set)
+#
+# def convert_state_for_map(state):
+#     if is_custom_state(state):
+#         return state[0]
+#     return state
+#
+# def add_coords_to_map(state, problem, total_path):
+#     if is_custom_state(state):
+#         problem.add_coords_to_map(state, problem, total_path)
+#     return state
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     # python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
     "*** YOUR CODE HERE ***"
-    frontier = util.PriorityQueue()
-    start_state = convert_state_for_map(problem.getStartState())
-    frontier.push((problem.getStartState(), None), 0)
-    came_from = dict()
-    cost_so_far = dict()
-    came_from[start_state] = None
-    cost_so_far[start_state] = 0
 
-    is_custom = is_custom_state(problem.getStartState())
+    fringe = util.PriorityQueue()
+    fringe.push(problem.getStartState(), 0)
+    came_from = util.PriorityQueue()
+    visited = []
     total_path = []
 
-    while not frontier.isEmpty():
-        current = frontier.pop()
+    curr_state = fringe.pop()
+    while not problem.isGoalState(curr_state):
+        if curr_state not in visited:
+            visited.append(curr_state)
+            for coord, direction, cost in problem.getSuccessors(curr_state):
+                if coord not in visited:
+                    temp_path = total_path + [direction]
+                    cost_so_far = problem.getCostOfActions(temp_path) + heuristic(coord, problem)
+                    fringe.push(coord, cost_so_far)
+                    came_from.push(temp_path, cost_so_far)
+        total_path = came_from.pop()
+        curr_state = fringe.pop()
 
-        if not is_custom:
-            goal_result = problem.isGoalState(add_coords_to_map(current[coordinate], problem, total_path))
-        else:
-            goal_result = problem.isGoalState(add_coords_to_map(current[coordinate], problem, total_path), is_custom)
-
-        if goal_result == True:
-            total_path.append(current[direction])
-            while convert_state_for_map(current[coordinate]) in came_from:
-                current = came_from[convert_state_for_map(current[coordinate])]
-                if current[direction] == None:
-                    return total_path
-                total_path = [current[direction]] + total_path
-        elif goal_result == 'reset' and current[coordinate] not in total_path:
-            total_path.append(current[direction])
-            while convert_state_for_map(current[coordinate]) in came_from:
-                current = came_from[convert_state_for_map(current[coordinate])]
-                if current == None:
-                    print('')
-                if current[direction] == None:
-                    came_from = dict()
-                    cost_so_far = dict()
-                    came_from[start_state] = None
-                    cost_so_far[start_state] = 0
-                    break
-                total_path = [current[direction]] + total_path
-
-
-        for coord, dir, cost in problem.getSuccessors(current[coordinate]):
-            new_cost = cost_so_far[convert_state_for_map(current[coordinate])] + cost
-            if convert_state_for_map(coord) not in cost_so_far or new_cost < cost_so_far[convert_state_for_map(coord)]:
-                cost_so_far[convert_state_for_map(coord)] = new_cost
-                priority = new_cost + heuristic(coord, problem)
-                frontier.push((coord, dir), priority)
-                came_from[convert_state_for_map(coord)] = current
-
-    return []
-
+    return total_path
 
 # Abbreviations
 bfs = breadthFirstSearch
