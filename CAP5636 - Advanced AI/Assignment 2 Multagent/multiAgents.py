@@ -74,7 +74,29 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        currentFood = currentGameState.getFood()
+        currentGhostStates = currentGameState.getGhostStates()
+        closest_food = 0 if currentFood[newPos[0]][newPos[1]] == True else float("inf")
+        if closest_food > 0:
+            for i, food_row in enumerate(newFood):
+                for j, food in enumerate(food_row):
+                    if food:
+                        closest_food = min(closest_food, manhattanDistance(newPos, (i, j)))
+
+        closest_ghost = float("inf")
+        for ghost in currentGhostStates:
+            closest_ghost = min(closest_ghost, manhattanDistance(newPos, ghost.configuration.getPosition()))
+
+        total_spaces = currentFood.height * currentFood.width
+
+        if closest_ghost < 2:
+            closest_ghost = total_spaces
+        else:
+            closest_ghost = 0
+
+        score = (total_spaces - closest_food) - closest_ghost
+        # util.manhattanDistance()
+        return score
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -129,7 +151,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        all_actions = dict()
+
+        # for i in range(gameState.getNumAgents()):
+        for action in gameState.getLegalActions(0):
+            cur_state = gameState.generateSuccessor(0, action)
+            all_actions[action] = self.minimax(cur_state, self.depth, 1)
+
+        max_value = max(all_actions.values())  # maximum value
+        max_keys = [k for k, v in all_actions.items() if v == max_value]
+        return max_keys[0]
+
+    def minimax(self, node, depth, maximizing_player):
+        if depth == 0 or node.isWin() or node.isLose():
+            return self.evaluationFunction(node)
+        elif maximizing_player == 0:
+            value = float("-inf")
+            for action in node.getLegalActions(maximizing_player):
+                value = max(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
+            return value
+        else:
+            value = float("inf")
+            for action in node.getLegalActions(maximizing_player):
+                if maximizing_player == node.getNumAgents() - 1:
+                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth - 1, 0))
+                else:
+                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
+            return value
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -141,7 +189,40 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        all_actions = dict()
+        alpha = float("-inf")
+        beta = float("inf")
+        # for i in range(gameState.getNumAgents()):
+        for action in gameState.getLegalActions(0):
+            cur_state = gameState.generateSuccessor(0, action)
+            all_actions[action] = self.minimax(cur_state, self.depth, alpha, beta, 1)
+            alpha = max(max(all_actions.values()), alpha)
+        max_value = max(all_actions.values())  # maximum value
+        max_keys = [k for k, v in all_actions.items() if v == max_value]
+        return max_keys[0]
+
+    def minimax(self, node, depth, alpha, beta, maximizing_player):
+        if depth == 0 or node.isWin() or node.isLose():
+            return self.evaluationFunction(node)
+        elif maximizing_player == 0:
+            value = float("-inf")
+            for action in node.getLegalActions(maximizing_player):
+                value = max(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, alpha, beta, maximizing_player + 1))
+                if value > beta:
+                    break
+                alpha = max(alpha, value)
+            return value
+        else:
+            value = float("inf")
+            for action in node.getLegalActions(maximizing_player):
+                if maximizing_player == node.getNumAgents() - 1:
+                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth - 1, alpha, beta, 0))
+                else:
+                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, alpha, beta, maximizing_player + 1))
+                if value < alpha:
+                    break
+                beta = min(beta, value)
+            return value
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
