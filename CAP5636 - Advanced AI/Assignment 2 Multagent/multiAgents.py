@@ -153,7 +153,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         all_actions = dict()
 
-        # for i in range(gameState.getNumAgents()):
         for action in gameState.getLegalActions(0):
             cur_state = gameState.generateSuccessor(0, action)
             all_actions[action] = self.minimax(cur_state, self.depth, 1)
@@ -192,7 +191,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         all_actions = dict()
         alpha = float("-inf")
         beta = float("inf")
-        # for i in range(gameState.getNumAgents()):
+
         for action in gameState.getLegalActions(0):
             cur_state = gameState.generateSuccessor(0, action)
             all_actions[action] = self.minimax(cur_state, self.depth, alpha, beta, 1)
@@ -237,17 +236,80 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        all_actions = dict()
+
+        for action in gameState.getLegalActions(0):
+            cur_state = gameState.generateSuccessor(0, action)
+            all_actions[action] = self.expectMiniMax(cur_state, self.depth, 1)
+
+        max_value = max(all_actions.values())  # maximum value
+        max_keys = [k for k, v in all_actions.items() if v == max_value]
+        return max_keys[0]
+
+    def expectMiniMax(self, node, depth, maximizing_player):
+        if depth == 0 or node.isWin() or node.isLose():
+            return self.evaluationFunction(node)
+        elif maximizing_player == 0:
+            value = float("-inf")
+            for action in node.getLegalActions(maximizing_player):
+                value = max(value, self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
+            return value
+        else:
+            value = 0
+            for action in node.getLegalActions(maximizing_player):
+                if maximizing_player == node.getNumAgents() - 1:
+                    value += self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth - 1, 0)
+                else:
+                    value += self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1)
+            return value
+
 
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
 
-      DESCRIPTION: <write something here so we know what you did>
+      DESCRIPTION: Always go to the closest food with the furthest away ghost. Always go to a capsule if nearby
     """
+
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    if currentGameState.isWin():
+        return float("inf")
+    if currentGameState.isLose():
+        return float("-inf")
+
+    currentFood = currentGameState.getFood()
+    currentGhostStates = currentGameState.getGhostStates()
+    currentPos = currentGameState.getPacmanPosition()
+    currentCap = currentGameState.getCapsules()
+    total_spaces = currentFood.height * currentFood.width
+    closest_food = 0 if currentGameState.hasFood(currentPos[0], currentPos[1]) == True else float("inf")
+    if closest_food > 0:
+        for i, food_row in enumerate(currentFood):
+            for j, food in enumerate(food_row):
+                if food:
+                    closest_food = min(closest_food, manhattanDistance(currentPos, (i, j)))
+
+    closest_ghost = float("inf")
+    for ghost in currentGhostStates:
+        closest_ghost = min(closest_ghost, manhattanDistance(currentPos, ghost.configuration.getPosition()))
+
+    closest_capsule = float("inf")
+    for cap in currentCap:
+        closest_capsule = min(closest_capsule, manhattanDistance(currentPos, cap))
+
+    if closest_ghost < 2:
+        closest_ghost = total_spaces
+    else:
+        closest_ghost = 0
+
+    food_or_capsule = min(closest_food, closest_capsule)
+
+    # random is needed so pacman won't just sit there if two spaces are equal
+    score = (total_spaces - food_or_capsule) - closest_ghost + random.choice([0, 1]) + (total_spaces*total_spaces)/(len(currentCap) + 1)
+
+    return score + scoreEvaluationFunction(currentGameState)
+
 
 # Abbreviation
 better = betterEvaluationFunction
