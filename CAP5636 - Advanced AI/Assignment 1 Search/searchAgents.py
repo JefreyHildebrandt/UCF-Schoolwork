@@ -289,7 +289,6 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         self.global_corners = set()
-        self.startingGameState = startingGameState
 
 
     def getStartState(self):

@@ -1,0 +1,637 @@
+Q1: Finds the closest food and closest ghost via manhattanDistance.  If current state is food then return max value, if current state has a ghost < 2 away then return min value.  The max value is the total number of spaces.
+Q2: Implemented the minimax algorithm as described by Wikipedia.  Goes through all of the states of pacman and the ghosts for the number specified by the depth.  If pacman has the highest value then take that, or if a ghost has a min value higher than pacmans highest, then take that.
+Q3: Implemented the same way as Q2, however, it breaks if there's no way the current state is better than a previous one. Which saves on iterations.
+Q4: Implemented the same way as Q2, however, instead of taking the max, min of the ghost states, it averages all of the ghost states.  This way it does not assume the ghost knows what it's doing, and assumes each state is equal.
+Q5: Always go to the closest food with the furthest away ghost. Always go to a capsule if the adjacent space.  Never go to a space with a ghost that is less than 2 spaces away unless a capsule is adjacent. Also adds a random 0 or 1 in case multiple choices have the same value, so it won't sit and lose points.  Also, knows if a state is a capsule by dividing a large number by the number of total capsules.  That way if the capsule number is 1 less then that state will have the advantage.
+
+AUTO GRADER:
+
+"C:\UCF-Schoolwork\CAP5636 - Advanced AI\Assignment 1 Search\venv\Scripts\python.exe" "C:/UCF-Schoolwork/CAP5636 - Advanced AI/Assignment 2 Multagent/autograder.py"
+Starting on 10-16 at 21:57:00
+
+Question q1
+===========
+
+Pacman emerges victorious! Score: 1246
+Pacman emerges victorious! Score: 1237
+Pacman emerges victorious! Score: 1235
+Pacman emerges victorious! Score: 1245
+Pacman emerges victorious! Score: 1233
+Pacman emerges victorious! Score: 1231
+Pacman emerges victorious! Score: 1235
+Pacman emerges victorious! Score: 1253
+Pacman emerges victorious! Score: 1231
+Pacman emerges victorious! Score: 1236
+Average Score: 1238.2
+Scores:        1246.0, 1237.0, 1235.0, 1245.0, 1233.0, 1231.0, 1235.0, 1253.0, 1231.0, 1236.0
+Win Rate:      10/10 (1.00)
+Record:        Win, Win, Win, Win, Win, Win, Win, Win, Win, Win
+*** PASS: test_cases\q1\grade-agent.test (4 of 4 points)
+***     1238.2 average score (2 of 2 points)
+***         Grading scheme:
+***          < 500:  0 points
+***         >= 500:  1 points
+***         >= 1000:  2 points
+***     10 games not timed out (0 of 0 points)
+***         Grading scheme:
+***          < 10:  fail
+***         >= 10:  0 points
+***     10 wins (2 of 2 points)
+***         Grading scheme:
+***          < 1:  fail
+***         >= 1:  0 points
+***         >= 5:  1 points
+***         >= 10:  2 points
+
+### Question q1: 4/4 ###
+
+
+Question q2
+===========
+
+*** PASS: test_cases\q2\0-lecture-6-tree.test
+*** PASS: test_cases\q2\0-small-tree.test
+*** PASS: test_cases\q2\1-1-minmax.test
+*** PASS: test_cases\q2\1-2-minmax.test
+*** PASS: test_cases\q2\1-3-minmax.test
+*** PASS: test_cases\q2\1-4-minmax.test
+*** PASS: test_cases\q2\1-5-minmax.test
+*** PASS: test_cases\q2\1-6-minmax.test
+*** PASS: test_cases\q2\1-7-minmax.test
+*** PASS: test_cases\q2\1-8-minmax.test
+*** PASS: test_cases\q2\2-1a-vary-depth.test
+*** PASS: test_cases\q2\2-1b-vary-depth.test
+*** PASS: test_cases\q2\2-2a-vary-depth.test
+*** PASS: test_cases\q2\2-2b-vary-depth.test
+*** PASS: test_cases\q2\2-3a-vary-depth.test
+*** PASS: test_cases\q2\2-3b-vary-depth.test
+*** PASS: test_cases\q2\2-4a-vary-depth.test
+*** PASS: test_cases\q2\2-4b-vary-depth.test
+*** PASS: test_cases\q2\2-one-ghost-3level.test
+*** PASS: test_cases\q2\3-one-ghost-4level.test
+*** PASS: test_cases\q2\4-two-ghosts-3level.test
+*** PASS: test_cases\q2\5-two-ghosts-4level.test
+*** PASS: test_cases\q2\6-tied-root.test
+*** PASS: test_cases\q2\7-1a-check-depth-one-ghost.test
+*** PASS: test_cases\q2\7-1b-check-depth-one-ghost.test
+*** PASS: test_cases\q2\7-1c-check-depth-one-ghost.test
+*** PASS: test_cases\q2\7-2a-check-depth-two-ghosts.test
+*** PASS: test_cases\q2\7-2b-check-depth-two-ghosts.test
+*** PASS: test_cases\q2\7-2c-check-depth-two-ghosts.test
+*** Running MinimaxAgent on smallClassic 1 time(s).
+Pacman died! Score: 84
+Average Score: 84.0
+Scores:        84.0
+Win Rate:      0/1 (0.00)
+Record:        Loss
+*** Finished running MinimaxAgent on smallClassic after 1 seconds.
+*** Won 0 out of 1 games. Average score: 84.000000 ***
+*** PASS: test_cases\q2\8-pacman-game.test
+
+### Question q2: 5/5 ###
+
+
+Question q3
+===========
+
+*** PASS: test_cases\q3\0-lecture-6-tree.test
+*** PASS: test_cases\q3\0-small-tree.test
+*** PASS: test_cases\q3\1-1-minmax.test
+*** PASS: test_cases\q3\1-2-minmax.test
+*** PASS: test_cases\q3\1-3-minmax.test
+*** PASS: test_cases\q3\1-4-minmax.test
+*** PASS: test_cases\q3\1-5-minmax.test
+*** PASS: test_cases\q3\1-6-minmax.test
+*** PASS: test_cases\q3\1-7-minmax.test
+*** PASS: test_cases\q3\1-8-minmax.test
+*** PASS: test_cases\q3\2-1a-vary-depth.test
+*** PASS: test_cases\q3\2-1b-vary-depth.test
+*** PASS: test_cases\q3\2-2a-vary-depth.test
+*** PASS: test_cases\q3\2-2b-vary-depth.test
+*** PASS: test_cases\q3\2-3a-vary-depth.test
+*** PASS: test_cases\q3\2-3b-vary-depth.test
+*** PASS: test_cases\q3\2-4a-vary-depth.test
+*** PASS: test_cases\q3\2-4b-vary-depth.test
+*** PASS: test_cases\q3\2-one-ghost-3level.test
+*** PASS: test_cases\q3\3-one-ghost-4level.test
+*** PASS: test_cases\q3\4-two-ghosts-3level.test
+*** PASS: test_cases\q3\5-two-ghosts-4level.test
+*** PASS: test_cases\q3\6-tied-root.test
+*** PASS: test_cases\q3\7-1a-check-depth-one-ghost.test
+*** PASS: test_cases\q3\7-1b-check-depth-one-ghost.test
+*** PASS: test_cases\q3\7-1c-check-depth-one-ghost.test
+*** PASS: test_cases\q3\7-2a-check-depth-two-ghosts.test
+*** PASS: test_cases\q3\7-2b-check-depth-two-ghosts.test
+*** PASS: test_cases\q3\7-2c-check-depth-two-ghosts.test
+*** Running AlphaBetaAgent on smallClassic 1 time(s).
+Pacman died! Score: 84
+Average Score: 84.0
+Scores:        84.0
+Win Rate:      0/1 (0.00)
+Record:        Loss
+*** Finished running AlphaBetaAgent on smallClassic after 0 seconds.
+*** Won 0 out of 1 games. Average score: 84.000000 ***
+*** PASS: test_cases\q3\8-pacman-game.test
+
+### Question q3: 5/5 ###
+
+
+Question q4
+===========
+
+*** PASS: test_cases\q4\0-expectimax1.test
+*** PASS: test_cases\q4\1-expectimax2.test
+*** PASS: test_cases\q4\2-one-ghost-3level.test
+*** PASS: test_cases\q4\3-one-ghost-4level.test
+*** PASS: test_cases\q4\4-two-ghosts-3level.test
+*** PASS: test_cases\q4\5-two-ghosts-4level.test
+*** PASS: test_cases\q4\6-1a-check-depth-one-ghost.test
+*** PASS: test_cases\q4\6-1b-check-depth-one-ghost.test
+*** PASS: test_cases\q4\6-1c-check-depth-one-ghost.test
+*** PASS: test_cases\q4\6-2a-check-depth-two-ghosts.test
+*** PASS: test_cases\q4\6-2b-check-depth-two-ghosts.test
+*** PASS: test_cases\q4\6-2c-check-depth-two-ghosts.test
+*** Running ExpectimaxAgent on smallClassic 1 time(s).
+Pacman died! Score: 84
+Average Score: 84.0
+Scores:        84.0
+Win Rate:      0/1 (0.00)
+Record:        Loss
+*** Finished running ExpectimaxAgent on smallClassic after 1 seconds.
+*** Won 0 out of 1 games. Average score: 84.000000 ***
+*** PASS: test_cases\q4\7-pacman-game.test
+
+### Question q4: 5/5 ###
+
+
+Question q5
+===========
+
+Pacman emerges victorious! Score: 1155
+Pacman emerges victorious! Score: 1224
+Pacman emerges victorious! Score: 1173
+Pacman emerges victorious! Score: 1161
+Pacman emerges victorious! Score: 1120
+Pacman emerges victorious! Score: 1099
+Pacman emerges victorious! Score: 1316
+Pacman emerges victorious! Score: 1174
+Pacman emerges victorious! Score: 968
+Pacman emerges victorious! Score: 915
+Average Score: 1130.5
+Scores:        1155.0, 1224.0, 1173.0, 1161.0, 1120.0, 1099.0, 1316.0, 1174.0, 968.0, 915.0
+Win Rate:      10/10 (1.00)
+Record:        Win, Win, Win, Win, Win, Win, Win, Win, Win, Win
+*** PASS: test_cases\q5\grade-agent.test (6 of 6 points)
+***     1130.5 average score (2 of 2 points)
+***         Grading scheme:
+***          < 500:  0 points
+***         >= 500:  1 points
+***         >= 1000:  2 points
+***     10 games not timed out (1 of 1 points)
+***         Grading scheme:
+***          < 0:  fail
+***         >= 0:  0 points
+***         >= 10:  1 points
+***     10 wins (3 of 3 points)
+***         Grading scheme:
+***          < 1:  fail
+***         >= 1:  1 points
+***         >= 5:  2 points
+***         >= 10:  3 points
+
+### Question q5: 6/6 ###
+
+
+Finished at 21:57:11
+
+Provisional grades
+==================
+Question q1: 4/4
+Question q2: 5/5
+Question q3: 5/5
+Question q4: 5/5
+Question q5: 6/6
+------------------
+Total: 25/25
+
+Your grades are NOT yet registered.  To register your grades, make sure
+to follow your instructor's guidelines to receive credit on your project.
+
+GIT LOG:
+
+commit b41d0629376573a66a56fdfa40e8e2d5025577fe
+Author: JefreyHildebrandt <JefreyHildebrandt@gmail.com>
+Date:   Tue Oct 16 21:42:11 2018 -0400
+
+    Final multiAgents
+
+diff --git a/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py
+index 8dea97a..c91f28b 100644
+--- a/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py	
++++ b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py	
+@@ -153,7 +153,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
+         "*** YOUR CODE HERE ***"
+         all_actions = dict()
+ 
+-        # for i in range(gameState.getNumAgents()):
+         for action in gameState.getLegalActions(0):
+             cur_state = gameState.generateSuccessor(0, action)
+             all_actions[action] = self.minimax(cur_state, self.depth, 1)
+@@ -192,7 +191,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
+         all_actions = dict()
+         alpha = float("-inf")
+         beta = float("inf")
+-        # for i in range(gameState.getNumAgents()):
++
+         for action in gameState.getLegalActions(0):
+             cur_state = gameState.generateSuccessor(0, action)
+             all_actions[action] = self.minimax(cur_state, self.depth, alpha, beta, 1)
+@@ -237,17 +236,80 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
+           legal moves.
+         """
+         "*** YOUR CODE HERE ***"
+-        util.raiseNotDefined()
++        all_actions = dict()
++
++        for action in gameState.getLegalActions(0):
++            cur_state = gameState.generateSuccessor(0, action)
++            all_actions[action] = self.expectMiniMax(cur_state, self.depth, 1)
++
++        max_value = max(all_actions.values())  # maximum value
++        max_keys = [k for k, v in all_actions.items() if v == max_value]
++        return max_keys[0]
++
++    def expectMiniMax(self, node, depth, maximizing_player):
++        if depth == 0 or node.isWin() or node.isLose():
++            return self.evaluationFunction(node)
++        elif maximizing_player == 0:
++            value = float("-inf")
++            for action in node.getLegalActions(maximizing_player):
++                value = max(value, self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
++            return value
++        else:
++            value = 0
++            for action in node.getLegalActions(maximizing_player):
++                if maximizing_player == node.getNumAgents() - 1:
++                    value += self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth - 1, 0)
++                else:
++                    value += self.expectMiniMax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1)
++            return value
++
+ 
+ def betterEvaluationFunction(currentGameState):
+     """
+       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
+       evaluation function (question 5).
+ 
+-      DESCRIPTION: <write something here so we know what you did>
++      DESCRIPTION: Always go to the closest food with the furthest away ghost. Always go to a capsule if nearby
+     """
++
+     "*** YOUR CODE HERE ***"
+-    util.raiseNotDefined()
++    if currentGameState.isWin():
++        return float("inf")
++    if currentGameState.isLose():
++        return float("-inf")
++
++    currentFood = currentGameState.getFood()
++    currentGhostStates = currentGameState.getGhostStates()
++    currentPos = currentGameState.getPacmanPosition()
++    currentCap = currentGameState.getCapsules()
++    total_spaces = currentFood.height * currentFood.width
++    closest_food = 0 if currentGameState.hasFood(currentPos[0], currentPos[1]) == True else float("inf")
++    if closest_food > 0:
++        for i, food_row in enumerate(currentFood):
++            for j, food in enumerate(food_row):
++                if food:
++                    closest_food = min(closest_food, manhattanDistance(currentPos, (i, j)))
++
++    closest_ghost = float("inf")
++    for ghost in currentGhostStates:
++        closest_ghost = min(closest_ghost, manhattanDistance(currentPos, ghost.configuration.getPosition()))
++
++    closest_capsule = float("inf")
++    for cap in currentCap:
++        closest_capsule = min(closest_capsule, manhattanDistance(currentPos, cap))
++
++    if closest_ghost < 2:
++        closest_ghost = total_spaces
++    else:
++        closest_ghost = 0
++
++    food_or_capsule = min(closest_food, closest_capsule)
++
++    # random is needed so pacman won't just sit there if two spaces are equal
++    score = (total_spaces - food_or_capsule) - closest_ghost + random.choice([0, 1]) + (total_spaces*total_spaces)/(len(currentCap) + 1)
++
++    return score + scoreEvaluationFunction(currentGameState)
++
+ 
+ # Abbreviation
+ better = betterEvaluationFunction
+
+commit 0b29b45953a9ef2e8af1cbf78947ad017c7d863f
+Author: JefreyHildebrandt <JefreyHildebrandt@gmail.com>
+Date:   Mon Oct 15 22:41:28 2018 -0400
+
+    multiagents up to question 4
+
+diff --git a/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py
+index 7d38851..8dea97a 100644
+--- a/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py	
++++ b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py	
+@@ -74,7 +74,29 @@ class ReflexAgent(Agent):
+         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+ 
+         "*** YOUR CODE HERE ***"
+-        return successorGameState.getScore()
++        currentFood = currentGameState.getFood()
++        currentGhostStates = currentGameState.getGhostStates()
++        closest_food = 0 if currentFood[newPos[0]][newPos[1]] == True else float("inf")
++        if closest_food > 0:
++            for i, food_row in enumerate(newFood):
++                for j, food in enumerate(food_row):
++                    if food:
++                        closest_food = min(closest_food, manhattanDistance(newPos, (i, j)))
++
++        closest_ghost = float("inf")
++        for ghost in currentGhostStates:
++            closest_ghost = min(closest_ghost, manhattanDistance(newPos, ghost.configuration.getPosition()))
++
++        total_spaces = currentFood.height * currentFood.width
++
++        if closest_ghost < 2:
++            closest_ghost = total_spaces
++        else:
++            closest_ghost = 0
++
++        score = (total_spaces - closest_food) - closest_ghost
++        # util.manhattanDistance()
++        return score
+ 
+ def scoreEvaluationFunction(currentGameState):
+     """
+@@ -129,7 +151,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
+             Returns the total number of agents in the game
+         """
+         "*** YOUR CODE HERE ***"
+-        util.raiseNotDefined()
++        all_actions = dict()
++
++        # for i in range(gameState.getNumAgents()):
++        for action in gameState.getLegalActions(0):
++            cur_state = gameState.generateSuccessor(0, action)
++            all_actions[action] = self.minimax(cur_state, self.depth, 1)
++
++        max_value = max(all_actions.values())  # maximum value
++        max_keys = [k for k, v in all_actions.items() if v == max_value]
++        return max_keys[0]
++
++    def minimax(self, node, depth, maximizing_player):
++        if depth == 0 or node.isWin() or node.isLose():
++            return self.evaluationFunction(node)
++        elif maximizing_player == 0:
++            value = float("-inf")
++            for action in node.getLegalActions(maximizing_player):
++                value = max(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
++            return value
++        else:
++            value = float("inf")
++            for action in node.getLegalActions(maximizing_player):
++                if maximizing_player == node.getNumAgents() - 1:
++                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth - 1, 0))
++                else:
++                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, maximizing_player + 1))
++            return value
+ 
+ class AlphaBetaAgent(MultiAgentSearchAgent):
+     """
+@@ -141,7 +189,40 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
+           Returns the minimax action using self.depth and self.evaluationFunction
+         """
+         "*** YOUR CODE HERE ***"
+-        util.raiseNotDefined()
++        all_actions = dict()
++        alpha = float("-inf")
++        beta = float("inf")
++        # for i in range(gameState.getNumAgents()):
++        for action in gameState.getLegalActions(0):
++            cur_state = gameState.generateSuccessor(0, action)
++            all_actions[action] = self.minimax(cur_state, self.depth, alpha, beta, 1)
++            alpha = max(max(all_actions.values()), alpha)
++        max_value = max(all_actions.values())  # maximum value
++        max_keys = [k for k, v in all_actions.items() if v == max_value]
++        return max_keys[0]
++
++    def minimax(self, node, depth, alpha, beta, maximizing_player):
++        if depth == 0 or node.isWin() or node.isLose():
++            return self.evaluationFunction(node)
++        elif maximizing_player == 0:
++            value = float("-inf")
++            for action in node.getLegalActions(maximizing_player):
++                value = max(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, alpha, beta, maximizing_player + 1))
++                if value > beta:
++                    break
++                alpha = max(alpha, value)
++            return value
++        else:
++            value = float("inf")
++            for action in node.getLegalActions(maximizing_player):
++                if maximizing_player == node.getNumAgents() - 1:
++                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth - 1, alpha, beta, 0))
++                else:
++                    value = min(value, self.minimax(node.generateSuccessor(maximizing_player, action), depth, alpha, beta, maximizing_player + 1))
++                if value < alpha:
++                    break
++                beta = min(beta, value)
++            return value
+ 
+ class ExpectimaxAgent(MultiAgentSearchAgent):
+     """
+
+commit b6764ed0aec67cefccd86badc0592b16357ee001
+Author: JefreyHildebrandt <JefreyHildebrandt@gmail.com>
+Date:   Fri Oct 5 17:30:15 2018 -0400
+
+    Pacman multiagents file
+
+diff --git a/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py
+new file mode 100644
+index 0000000..7d38851
+--- /dev/null
++++ b/CAP5636 - Advanced AI/Assignment 2 Multagent/multiAgents.py	
+@@ -0,0 +1,173 @@
++# multiAgents.py
++# --------------
++# Licensing Information:  You are free to use or extend these projects for
++# educational purposes provided that (1) you do not distribute or publish
++# solutions, (2) you retain this notice, and (3) you provide clear
++# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
++# 
++# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
++# The core projects and autograders were primarily created by John DeNero
++# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
++# Student side autograding was added by Brad Miller, Nick Hay, and
++# Pieter Abbeel (pabbeel@cs.berkeley.edu).
++
++
++from util import manhattanDistance
++from game import Directions
++import random, util
++
++from game import Agent
++
++class ReflexAgent(Agent):
++    """
++      A reflex agent chooses an action at each choice point by examining
++      its alternatives via a state evaluation function.
++
++      The code below is provided as a guide.  You are welcome to change
++      it in any way you see fit, so long as you don't touch our method
++      headers.
++    """
++
++
++    def getAction(self, gameState):
++        """
++        You do not need to change this method, but you're welcome to.
++
++        getAction chooses among the best options according to the evaluation function.
++
++        Just like in the previous project, getAction takes a GameState and returns
++        some Directions.X for some X in the set {North, South, West, East, Stop}
++        """
++        # Collect legal moves and successor states
++        legalMoves = gameState.getLegalActions()
++
++        # Choose one of the best actions
++        scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
++        bestScore = max(scores)
++        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
++        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
++
++        "Add more of your code here if you want to"
++
++        return legalMoves[chosenIndex]
++
++    def evaluationFunction(self, currentGameState, action):
++        """
++        Design a better evaluation function here.
++
++        The evaluation function takes in the current and proposed successor
++        GameStates (pacman.py) and returns a number, where higher numbers are better.
++
++        The code below extracts some useful information from the state, like the
++        remaining food (newFood) and Pacman position after moving (newPos).
++        newScaredTimes holds the number of moves that each ghost will remain
++        scared because of Pacman having eaten a power pellet.
++
++        Print out these variables to see what you're getting, then combine them
++        to create a masterful evaluation function.
++        """
++        # Useful information you can extract from a GameState (pacman.py)
++        successorGameState = currentGameState.generatePacmanSuccessor(action)
++        newPos = successorGameState.getPacmanPosition()
++        newFood = successorGameState.getFood()
++        newGhostStates = successorGameState.getGhostStates()
++        newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
++
++        "*** YOUR CODE HERE ***"
++        return successorGameState.getScore()
++
++def scoreEvaluationFunction(currentGameState):
++    """
++      This default evaluation function just returns the score of the state.
++      The score is the same one displayed in the Pacman GUI.
++
++      This evaluation function is meant for use with adversarial search agents
++      (not reflex agents).
++    """
++    return currentGameState.getScore()
++
++class MultiAgentSearchAgent(Agent):
++    """
++      This class provides some common elements to all of your
++      multi-agent searchers.  Any methods defined here will be available
++      to the MinimaxPacmanAgent, AlphaBetaPacmanAgent & ExpectimaxPacmanAgent.
++
++      You *do not* need to make any changes here, but you can if you want to
++      add functionality to all your adversarial search agents.  Please do not
++      remove anything, however.
++
++      Note: this is an abstract class: one that should not be instantiated.  It's
++      only partially specified, and designed to be extended.  Agent (game.py)
++      is another abstract class.
++    """
++
++    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
++        self.index = 0 # Pacman is always agent index 0
++        self.evaluationFunction = util.lookup(evalFn, globals())
++        self.depth = int(depth)
++
++class MinimaxAgent(MultiAgentSearchAgent):
++    """
++      Your minimax agent (question 2)
++    """
++
++    def getAction(self, gameState):
++        """
++          Returns the minimax action from the current gameState using self.depth
++          and self.evaluationFunction.
++
++          Here are some method calls that might be useful when implementing minimax.
++
++          gameState.getLegalActions(agentIndex):
++            Returns a list of legal actions for an agent
++            agentIndex=0 means Pacman, ghosts are >= 1
++
++          gameState.generateSuccessor(agentIndex, action):
++            Returns the successor game state after an agent takes an action
++
++          gameState.getNumAgents():
++            Returns the total number of agents in the game
++        """
++        "*** YOUR CODE HERE ***"
++        util.raiseNotDefined()
++
++class AlphaBetaAgent(MultiAgentSearchAgent):
++    """
++      Your minimax agent with alpha-beta pruning (question 3)
++    """
++
++    def getAction(self, gameState):
++        """
++          Returns the minimax action using self.depth and self.evaluationFunction
++        """
++        "*** YOUR CODE HERE ***"
++        util.raiseNotDefined()
++
++class ExpectimaxAgent(MultiAgentSearchAgent):
++    """
++      Your expectimax agent (question 4)
++    """
++
++    def getAction(self, gameState):
++        """
++          Returns the expectimax action using self.depth and self.evaluationFunction
++
++          All ghosts should be modeled as choosing uniformly at random from their
++          legal moves.
++        """
++        "*** YOUR CODE HERE ***"
++        util.raiseNotDefined()
++
++def betterEvaluationFunction(currentGameState):
++    """
++      Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
++      evaluation function (question 5).
++
++      DESCRIPTION: <write something here so we know what you did>
++    """
++    "*** YOUR CODE HERE ***"
++    util.raiseNotDefined()
++
++# Abbreviation
++better = betterEvaluationFunction
++
